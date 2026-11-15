@@ -1,0 +1,3223 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>周洇 · 枕石記</title>
+<link rel="icon" href="data:,">
+<!-- 引入真正可用的汇文明朝体（分包加速切片 CDN，国内秒级加载，无需本地安装） -->
+<link rel="stylesheet" href="https://fontsapi.zeoseven.com/256/main/result.css">
+<style>
+:root{
+  --bg:#f1f5f0;
+  --bg-green:#ebf2ea;
+  --ink:#1a241c;
+  --muted:#576b5b;
+  --faint:#9db0a1;
+  --line:#d2ded3;
+  --panel:#e3ede4;
+  --paper:#f7faf6;
+  --paper-shadow:#dce8dd;
+  --bone:#6f8072;
+  --bone-dark:#243327;
+  --serif:"Huiwen-mincho","汇文明朝体","Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+}
+[data-theme="dark"]{
+  --bg:#0c120e;
+  --bg-green:#080d09;
+  --ink:#dbe5dd;
+  --muted:#7e9483;
+  --faint:#425245;
+  --line:#1c291f;
+  --panel:#131c15;
+  --paper:#17221a;
+  --paper-shadow:#0e1710;
+  --bone:#4d5f50;
+  --bone-dark:#9db3a1;
+}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-tap-highlight-color:transparent !important;
+  -webkit-touch-callout:none !important;
+  user-select:none;
+}
+html{
+  -webkit-text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent !important;
+  overflow-x:hidden;
+}
+body{
+  font-family:var(--serif);
+  color:var(--ink);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  transition:background .4s ease,color .4s ease;
+  overflow-x:hidden;
+  overflow-y:auto;
+  scroll-behavior:smooth;
+  width:100%;
+  max-width:100vw;
+  min-height:100vh;
+  position:relative;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent !important;
+  -webkit-user-select:none;
+}
+::selection{background:transparent;color:inherit;}
+
+/* 整体长卷滚动包装器：支持六页平滑纵向滑动，长图背景随之位移 */
+.scroll-wrapper{
+  position:relative;
+  width:100vw;
+  min-height:300vh;
+  z-index:10;
+}
+
+/* 背景意境长图（aa1）：固定在视口，支持多屏连续滑动时视差过渡 */
+.bg-art{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  object-fit:cover;
+  object-position:center top;
+  opacity:.26;
+  filter:saturate(0.75) contrast(1.05);
+  pointer-events:none;
+  z-index:0;
+  mix-blend-mode:multiply;
+  transition:object-position .5s ease-out;
+}
+[data-theme="dark"] .bg-art{
+  opacity:.16;
+  filter:invert(0.9) hue-rotate(180deg) saturate(0.5);
+  mix-blend-mode:screen;
+}
+
+/* 顶部古风信笺引首：印章 + 竖排纤细引首辞，雅致压角，不突兀且破除大片留白 */
+.letter-crest{
+  position:fixed;
+  top:26px;
+  left:28px;
+  z-index:25;
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  pointer-events:none;
+}
+/* 朱文朱印（缩小50%至极为精致小巧的雅致压角章，保持饱满逼边与金石质感） */
+.seal-stamp{
+  width:15px;
+  height:25px;
+  border:1.2px solid rgba(168, 52, 42, .82);
+  border-radius:1px;
+  padding:1px 0.5px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-around;
+  background:rgba(168, 52, 42, .06);
+  box-shadow:inset 0 0 0 0.5px rgba(168, 52, 42, .25), 0 1px 2px rgba(168, 52, 42, .1);
+}
+.seal-stamp span{
+  font-family:"Huiwen-mincho","汇文明朝体","Noto Serif SC",serif;
+  font-size:7.5px;
+  line-height:1;
+  color:rgba(168, 52, 42, .92);
+  font-weight:900;
+  letter-spacing:.04em;
+  transform:scaleY(1.05);
+  display:block;
+}
+/* 竖排纤弱引首小句（取消高度限制，确保7个字绝对单列竖排不折行） */
+.crest-verse{
+  writing-mode:vertical-rl;
+  -webkit-writing-mode:vertical-rl;
+  text-orientation:upright;
+  -webkit-text-orientation:upright;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:9.5px;
+  letter-spacing:.32em;
+  color:var(--muted);
+  opacity:.6;
+  line-height:1;
+  white-space:nowrap;
+}
+[data-theme="dark"] .seal-stamp{
+  border-color:rgba(215, 95, 85, .72);
+  background:rgba(215, 95, 85, .08);
+  box-shadow:inset 0 0 0 0.5px rgba(215, 95, 85, .3);
+}
+[data-theme="dark"] .seal-stamp span{
+  color:rgba(215, 95, 85, .88);
+}
+
+/* 控制栏：音乐开关改为独立圆形按钮置于右上角 */
+.music-circle-btn{
+  position:fixed;
+  top:24px;
+  right:28px;
+  left:auto;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:rgba(247, 250, 246, 0.7);
+  border:1px solid var(--line);
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:300;
+  backdrop-filter:blur(4px);
+  box-shadow:0 2px 6px rgba(0,0,0,.04);
+  transition:all .3s ease;
+  font-family:var(--serif);
+  font-size:13px;
+  line-height:1;
+}
+.music-circle-btn:hover{
+  border-color:var(--muted);
+  transform:scale(1.08);
+}
+.music-circle-btn.playing{
+  border-color:var(--ink);
+  color:var(--ink);
+  animation:musicSpin 6s linear infinite;
+}
+@keyframes musicSpin{
+  100%{transform:rotate(360deg)}
+}
+[data-theme="dark"] .music-circle-btn{
+  background:rgba(23, 34, 26, 0.7);
+}
+
+.controls{
+  display:none !important;
+}
+
+/* 背景雨丝与落雨有痕系统 */
+.rain-canvas{
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  pointer-events:none;
+  z-index:2;
+}
+
+/* 舞台容器：第一页独立占据一屏，绝对居中布局 */
+/* 第一页：舞台容器，全平台统一安全边界与视口计算 */
+.stage{
+  position:relative;
+  width:100%;
+  max-width:100vw;
+  height:100vh;
+  min-height:560px;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  padding:20px;
+  box-sizing:border-box;
+}
+
+/* 扇子视野区域：垂直居中偏上，作为第一幕绝对基准中心（全机型统一固定几何尺寸） */
+.fan-viewport{
+  position:relative;
+  width:320px;
+  height:200px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  margin:0 auto;
+  pointer-events:auto;
+  transform:translateY(-85px);
+  overflow:visible;
+}
+
+/* 扇子正上方右上竖列文案区：
+   无论 iOS 还是安卓，统一锚定在扇子视口内部右上，距离扇子右边缘留足 20px 安全距离，
+   彻底消灭任何机型的贴边与出界！ */
+.fan-above{
+  position:absolute;
+  top:-105px;
+  right:20px;
+  display:flex;
+  flex-direction:row-reverse;
+  align-items:flex-start;
+  gap:12px;
+  z-index:30;
+  pointer-events:auto;
+}
+
+/* 诗句双纵列：右上并列竖排，全平台标准竖排前缀与字宽保护 */
+.poem-col{
+  writing-mode:vertical-rl;
+  -webkit-writing-mode:vertical-rl;
+  text-orientation:upright;
+  -webkit-text-orientation:upright;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.28em;
+  color:var(--ink);
+  line-height:1.4;
+  white-space:nowrap;
+  opacity:0;
+  transform:translateY(16px);
+  transition:opacity 3s cubic-bezier(.22,1,.36,1), transform 3s cubic-bezier(.22,1,.36,1);
+  box-sizing:border-box;
+  width:auto;
+  min-width:1.5em;
+}
+.poem-col.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* 第一列（此情無計可消除）：舒展起笔 */
+.poem-col-1{
+  margin-top:0px;
+}
+/* 第二列（才下眉頭，卻上心頭）：与第一列并行并列，于前一句后三分之一处错落起笔 */
+.poem-col-2{
+  margin-top:105px;
+}
+
+/* 水滴挂于心字与头字之间垂直落向下一行 */
+.drop-slot{
+  position:relative;
+  display:inline-flex;
+}
+.drop-track{
+  position:absolute;
+  top:100%;
+  left:50%;
+  transform:translateX(-50%);
+  width:18px;
+  height:28px;
+}
+.poem-drop{
+  font-size:15px;
+  line-height:1;
+  filter:grayscale(1);
+  opacity:0;
+  transform:translateY(-4px);
+  transition:opacity 1.4s ease, transform 1.8s cubic-bezier(.34, 1.3, .64, 1);
+}
+.poem-drop.drop-in{
+  opacity:.75;
+  transform:translateY(12px);
+}
+
+/* 页面左下角文案二：“卿卿如晤，見字如面”竖列排列，末字位于引导箭头一半高度 */
+.stage-left-foot{
+  position:absolute;
+  left:clamp(20px, 8vw, 60px);
+  bottom:38px;
+  z-index:30;
+  pointer-events:auto;
+}
+.sub-greeting-vert{
+  writing-mode:vertical-rl;
+  -webkit-writing-mode:vertical-rl;
+  text-orientation:upright;
+  -webkit-text-orientation:upright;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:clamp(13px, 3.1vw, 15.5px);
+  letter-spacing:.38em;
+  color:var(--muted);
+  white-space:nowrap;
+  line-height:1.2;
+  opacity:0;
+  transform:translateY(16px);
+  transition:opacity 2.5s cubic-bezier(.22,1,.36,1), transform 2.5s cubic-bezier(.22,1,.36,1);
+}
+.sub-greeting-vert.show{
+  opacity:.88;
+  transform:translateY(0);
+}
+
+/* 底部下滑引导细长竖线箭头：与穗麦底部拉开两倍以上的留白距离，沉底安置（距底端16px） */
+.scroll-indicator{
+  position:absolute;
+  bottom:16px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:pointer;
+  z-index:40;
+  pointer-events:auto;
+  opacity:0;
+  transition:opacity 1.5s ease;
+  text-decoration:none;
+}
+.scroll-indicator.show{
+  opacity:.75;
+}
+.scroll-indicator:hover{
+  opacity:1;
+}
+.indicator-line{
+  width:1px;
+  height:36px;
+  background:linear-gradient(to bottom, transparent 0%, var(--muted) 40%, var(--ink) 100%);
+  position:relative;
+  animation:arrowLinePulse 2.8s ease-in-out infinite;
+}
+.indicator-arrow{
+  width:7px;
+  height:7px;
+  border-right:1px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  transform:rotate(45deg);
+  margin-top:-4px;
+  animation:arrowPointPulse 2.8s ease-in-out infinite;
+}
+@keyframes arrowLinePulse{
+  0%, 100%{height:32px; opacity:.55}
+  50%{height:44px; opacity:1}
+}
+@keyframes arrowPointPulse{
+  0%, 100%{transform:rotate(45deg) translate(0, 0); opacity:.55}
+  50%{transform:rotate(45deg) translate(2px, 2px); opacity:1}
+}
+
+.fan-container{
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  width:0;
+  height:0;
+  transform-style:preserve-3d;
+}
+
+/* 扇钉与流苏挂饰 */
+.fan-pivot{
+  position:absolute;
+  left:0;
+  top:0;
+  width:15px;
+  height:15px;
+  margin:-7.5px 0 0 -7.5px;
+  border-radius:50%;
+  background:var(--paper);
+  border:1.5px solid var(--ink);
+  z-index:150;
+  box-shadow:0 2px 6px rgba(0,0,0,.15);
+}
+.fan-pivot::after{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:5px;
+  height:5px;
+  margin:-2.5px 0 0 -2.5px;
+  border-radius:50%;
+  background:var(--ink);
+}
+
+/* 扇穗容器：位于扇钉下方自然垂落，图层在背景图之上一层、文案二图层之下 */
+.tassel-wrap{
+  position:absolute;
+  left:0;
+  top:0;
+  width:0;
+  height:0;
+  z-index:15;
+  pointer-events:none;
+}
+.tassel{
+  position:absolute;
+  left:0;
+  top:0;
+  transform-origin:50% 0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  animation:tasselSway 5.6s ease-in-out infinite alternate;
+}
+@keyframes tasselSway{
+  0%{transform:rotate(-3.5deg)}
+  50%{transform:rotate(1.5deg)}
+  100%{transform:rotate(4deg)}
+}
+
+/* 丝绳编结与玉环（清淡浅灰绿、通透轻巧） */
+.tassel-cord{
+  width:1.2px;
+  height:24px;
+  background:#5a6d5f;
+  opacity:.8;
+  margin:0 auto;
+}
+.tassel-bead{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #ffffff, #c2d4c5 60%, #6d8272 100%);
+  border:0.8px solid #5a6d5f;
+  box-shadow:0 1px 2px rgba(0,0,0,.08);
+  margin:-1.5px auto;
+}
+.tassel-cord-short{
+  width:1.2px;
+  height:8px;
+  background:#5a6d5f;
+  opacity:.8;
+  margin:0 auto;
+}
+.tassel-knot{
+  width:10px;
+  height:7px;
+  background:#5a6d5f;
+  border-radius:1px;
+  position:relative;
+  box-shadow:0 1px 2px rgba(0,0,0,.1);
+  margin:0 auto;
+}
+.tassel-knot::after{
+  content:'';
+  position:absolute;
+  left:2px;
+  right:2px;
+  top:1.5px;
+  bottom:1.5px;
+  background:#8da392;
+  border-radius:0.5px;
+  opacity:.7;
+}
+
+/* 密实随风散逸流苏穗子：
+   流苏束宽度同穗扣严格匹配（10px），左右各留 10%（1px）边距，中间 80%（1px~9px）均布生出 18 根流苏细丝 */
+.tassel-fringe{
+  position:relative;
+  width:10px;
+  height:94px;
+  margin:0 auto;
+  margin-top:-1px;
+  background:transparent;
+}
+.tassel-fringe span{
+  position:absolute;
+  top:0;
+  width:1px;
+  /* 浅灰竹绿渐隐质感 */
+  background:linear-gradient(
+    to bottom,
+    #526557 0%,
+    #697e6e 28%,
+    rgba(130, 150, 134, .7) 65%,
+    rgba(180, 200, 185, .32) 90%,
+    rgba(210, 225, 215, 0) 100%
+  );
+  border-radius:0;
+  transform-origin:top center;
+  animation:fringeFlutter var(--t, 3.8s) ease-in-out infinite alternate;
+}
+.tassel-fringe span:nth-child(1){left:1.00px; height:84px; --t:3.4s; --rot:-6.0deg; animation-delay:0.1s}
+.tassel-fringe span:nth-child(2){left:1.45px; height:88px; --t:4.2s; --rot:-5.3deg; animation-delay:0.4s}
+.tassel-fringe span:nth-child(3){left:1.90px; height:93px; --t:3.7s; --rot:-4.6deg; animation-delay:0.2s}
+.tassel-fringe span:nth-child(4){left:2.35px; height:86px; --t:4.5s; --rot:-3.9deg; animation-delay:0.7s}
+.tassel-fringe span:nth-child(5){left:2.80px; height:95px; --t:3.9s; --rot:-3.2deg; animation-delay:0.0s}
+.tassel-fringe span:nth-child(6){left:3.25px; height:90px; --t:4.1s; --rot:-2.5deg; animation-delay:0.3s}
+.tassel-fringe span:nth-child(7){left:3.70px; height:94px; --t:3.6s; --rot:-1.8deg; animation-delay:0.6s}
+.tassel-fringe span:nth-child(8){left:4.15px; height:89px; --t:4.4s; --rot:-1.1deg; animation-delay:0.2s}
+.tassel-fringe span:nth-child(9){left:4.60px; height:96px; --t:3.8s; --rot:-0.4deg; animation-delay:0.5s; width:1.1px}
+.tassel-fringe span:nth-child(10){left:5.05px; height:95px; --t:4.0s; --rot:0.3deg; animation-delay:0.1s; width:1.1px}
+.tassel-fringe span:nth-child(11){left:5.50px; height:91px; --t:3.5s; --rot:1.0deg; animation-delay:0.4s}
+.tassel-fringe span:nth-child(12){left:5.95px; height:87px; --t:4.3s; --rot:1.7deg; animation-delay:0.8s}
+.tassel-fringe span:nth-child(13){left:6.40px; height:94px; --t:3.7s; --rot:2.4deg; animation-delay:0.3s}
+.tassel-fringe span:nth-child(14){left:6.85px; height:89px; --t:4.1s; --rot:3.1deg; animation-delay:0.6s}
+.tassel-fringe span:nth-child(15){left:7.30px; height:93px; --t:3.6s; --rot:3.8deg; animation-delay:0.2s}
+.tassel-fringe span:nth-child(16){left:7.75px; height:86px; --t:4.4s; --rot:4.5deg; animation-delay:0.7s}
+.tassel-fringe span:nth-child(17){left:8.20px; height:91px; --t:3.9s; --rot:5.2deg; animation-delay:0.3s}
+.tassel-fringe span:nth-child(18){left:8.65px; height:85px; --t:3.5s; --rot:6.0deg; animation-delay:0.5s}
+
+/* 十六档大折扇单骨档位：
+   整长保持 170px，底部留出 55px 露出扇骨，上部 115px 为连续黏连的折叠纸质扇面 */
+.rib{
+  position:absolute;
+  left:-15px;
+  bottom:0;
+  width:30px;
+  height:170px;
+  transform-origin:50% 100%;
+  transform:rotate(-70deg);
+  transition:transform 2.2s cubic-bezier(.16, 1, .3, 1);
+  pointer-events:none;
+}
+.rib.opened{
+  transform:rotate(var(--target-deg)) !important;
+}
+
+/* 露出的细长竹木扇骨（中下部 0 ~ 170px 贯通支撑） */
+.rib-bone{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  width:2px;
+  height:170px;
+  transform:translateX(-50%);
+  background:linear-gradient(to top, var(--bone-dark) 0%, var(--bone) 35%, var(--line) 90%, transparent 100%);
+  z-index:5;
+}
+
+/* 左右两根包边大骨（排面大骨，更加厚实厚重） */
+.rib.outer-left .rib-bone,
+.rib.outer-right .rib-bone{
+  width:3.5px;
+  background:linear-gradient(to top, var(--ink) 0%, var(--bone-dark) 40%, var(--muted) 100%);
+  border-radius:1px;
+}
+
+/* 连贯黏连的扇面折褶（上部扇面）：
+   宽 38px 呈上阔下窄扇形微梯，相邻折叠彼此紧密黏连重叠，山折与谷折光影交替，呈现出整片连续纸质扇面的质感 */
+.rib-face{
+  position:absolute;
+  top:0;
+  left:-4px;
+  width:38px;
+  height:116px;
+  border-radius:4px 4px 0 0;
+  clip-path:polygon(18% 100%, 82% 100%, 100% 0%, 0% 0%);
+  z-index:2;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2);
+}
+
+/* 山折（受光折）：纸色微暖微明，带纸张纤维暗纹 */
+.rib.pleat-hill .rib-face{
+  background:linear-gradient(105deg, var(--paper) 0%, var(--panel) 100%);
+  border-top:1px solid var(--line);
+}
+
+/* 谷折（背光折）：带微弱阴影下沉，形成天然折扇的凹凸黏连立体感 */
+.rib.pleat-valley .rib-face{
+  background:linear-gradient(95deg, var(--paper-shadow) 0%, var(--panel) 85%, rgba(0,0,0,.04) 100%);
+  border-top:1px solid var(--muted);
+  filter:brightness(.96);
+}
+
+/* ========================================================
+   移动端手机屏幕排版规范：第二、三、四、五幕两侧留白至少50px，雅致不贴边
+   ======================================================== */
+@media(max-width:560px){
+  /* 舞台整体在常规手机视口保持居中偏上 */
+  .stage{
+    transform:translateY(0);
+    padding:16px 20px 24px;
+  }
+  
+  /* 左上角印章与引首 */
+  .letter-crest{
+    top:20px;
+    left:18px;
+    gap:8px;
+  }
+  .music-circle-btn{
+    top:18px;
+    right:18px;
+    left:auto;
+    width:28px;
+    height:28px;
+    font-size:11px;
+  }
+  
+  /* 第一页右上角错落双列诗句：全机型安全居中微调 */
+  .fan-above{
+    top:-95px;
+    right:18px !important;
+    left:auto;
+    gap:10px;
+  }
+  .poem-col{
+    font-size:13px;
+    letter-spacing:.26em;
+  }
+  .poem-col-1{
+    margin-top:0px;
+  }
+  .poem-col-2{
+    margin-top:95px;
+  }
+  
+  /* 扇子与流苏尺寸在手机上适配（iOS与安卓通用安全版心） */
+  .fan-viewport{
+    width:280px;
+    height:180px;
+    transform:translateY(-75px);
+    margin:0 auto;
+    position:relative;
+  }
+  .rib{
+    height:140px;
+    width:25px;
+    left:-12.5px;
+  }
+  .rib-bone{
+    height:140px;
+  }
+  .rib-face{
+    height:94px;
+    width:30px;
+  }
+  .tassel-fringe{
+    height:76px;
+  }
+
+  /* 左下角文案二：常规手机屏精准左对齐 */
+  .stage-left-foot{
+    left:18px;
+    bottom:32px;
+  }
+  .sub-greeting-vert{
+    font-size:13px;
+    letter-spacing:.32em;
+  }
+
+  /* 底部滑动引导箭头 */
+  .scroll-indicator{
+    bottom:14px;
+  }
+  .indicator-line{
+    height:28px;
+  }
+
+  /* 第二页：居中布局，手机端两侧对称留白 */
+  .stage-page2{
+    padding:44px 24px 60px !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+  .p2-intro-wrap{
+    margin-bottom:24px;
+    gap:8px;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+  .p2-intro-tag{
+    font-size:10px;
+    letter-spacing:.30em;
+  }
+  .p2-intro-title{
+    font-size:16px;
+    letter-spacing:.28em;
+  }
+  .p2-intro-hint{
+    font-size:10.5px;
+    letter-spacing:.20em;
+  }
+
+  /* 第二页长卷在手机端收束适配（绝对居中） */
+  .scroll-canvas{
+    width:100% !important;
+    max-width:280px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    padding:24px 8px 32px !important;
+  }
+  .verse-chain-list{
+    min-height:360px;
+    gap:4px;
+    padding:6px 2px 10px;
+  }
+  .chain-verse{
+    font-size:11.5px;
+    letter-spacing:.22em;
+  }
+  .chain-cord{
+    height:16px;
+  }
+  .kw-box{
+    padding:4.5px 3px;
+    min-width:20px;
+  }
+  .kw-text{
+    font-size:10.5px;
+    letter-spacing:.20em;
+  }
+  .scroll-footer-verse{
+    font-size:10px;
+    letter-spacing:.22em;
+  }
+
+  /* 第三页：落墨澄心，两侧强制留白 50px */
+  .stage-page3{
+    padding:60px 50px 70px !important;
+  }
+  .p3-wrap{
+    max-width:100% !important;
+  }
+  .p3-text-box{
+    gap:18px;
+    min-height:190px;
+  }
+  .p3-verse-col{
+    font-size:13px;
+    letter-spacing:.26em;
+  }
+  .p3-author-col{
+    font-size:10px;
+    letter-spacing:.28em;
+    margin-top:50px;
+  }
+  .p3-traits-panel{
+    padding:16px 0 0 !important;
+    gap:12px;
+  }
+  .p3-trait-row{
+    gap:6px;
+  }
+  .p3-trait-tags{
+    gap:3px 5px;
+  }
+  .p3-tag-leaf{
+    font-size:12px;
+    letter-spacing:.08em;
+  }
+
+  /* 第四页：灵鱼引水，两侧强制留白 50px */
+  .stage-page4{
+    padding:60px 50px 70px !important;
+  }
+  .p4-wrap{
+    max-width:100% !important;
+  }
+  .p4-verse-box{
+    gap:18px;
+    min-height:190px;
+  }
+  .p4-verse-col{
+    font-size:13px;
+    letter-spacing:.26em;
+  }
+  .p4-author-col{
+    font-size:10px;
+    letter-spacing:.28em;
+    margin-top:40px;
+  }
+
+  /* 第五页：仿真风琴折子，两侧强制留白 50px */
+  .stage-page5{
+    padding:60px 50px 70px !important;
+  }
+  .p5-wrap{
+    max-width:100% !important;
+  }
+  .p5-accordion-book{
+    max-width:270px;
+  }
+  .p5-fold-leaf{
+    min-width:76px;
+    padding:22px 8px 18px;
+  }
+  .p5-fold-text{
+    font-size:12px;
+    letter-spacing:.20em;
+  }
+  
+  /* 第五页大页面弹窗：手机端两侧留白 30px */
+  .p5-modal-overlay{
+    padding:20px 30px !important;
+  }
+  .p5-grand-paper{
+    padding:28px 16px 20px;
+    max-height:86vh;
+    overflow-y:auto;
+  }
+  .p5-modal-content{
+    flex-direction:column;
+    flex-wrap:nowrap;
+    max-height:none;
+    overflow:visible;
+    gap:8px;
+    align-items:flex-start;
+  }
+  .p5-notice-col{
+    writing-mode:horizontal-tb;
+    max-height:none;
+    font-size:12px;
+    line-height:1.28;
+    letter-spacing:.06em;
+    text-align:left;
+  }
+  .p5-notice-col.accent{
+    align-self:flex-start;
+    margin-top:6px;
+  }
+
+  /* 第六页：余韵终章，两侧留白 40px */
+  .stage-page6{
+    padding:60px 40px 70px !important;
+  }
+  .p6-verse-col{
+    font-size:15px;
+    letter-spacing:.32em;
+    height:150px;
+  }
+
+  /* 三大分支页面模态容器：手机端两侧留白 30px */
+  .branch-view-overlay{
+    padding:40px 24px 60px !important;
+  }
+  .antique-letter-paper{
+    padding:36px 20px 32px !important;
+  }
+  .letter-body{
+    font-size:13.5px !important;
+    line-height:1.9 !important;
+  }
+}
+
+/* ========================================================
+   第二页：古风长卷样式（全平台绝对水平居中布局）
+   ======================================================== */
+.stage-page2{
+  position:relative;
+  width:100%;
+  max-width:100vw;
+  min-height:100vh;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:80px 20px 90px;
+  box-sizing:border-box;
+}
+
+/* 顶部小引与“或許你想要知道的”：缩小 10px 距离，增加未加粗华文仿宋提示小字 */
+.p2-intro-wrap{
+  text-align:center;
+  margin-bottom:34px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  opacity:0;
+  transform:translateY(18px);
+  transition:opacity 2.2s ease, transform 2.2s ease;
+  width:100%;
+  max-width:420px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.p2-intro-wrap.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.p2-intro-tag{
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:11px;
+  letter-spacing:.38em;
+  color:var(--faint);
+  margin-bottom:0;
+}
+.p2-intro-title{
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:clamp(16.5px, 3.8vw, 20.5px);
+  letter-spacing:.34em;
+  color:var(--ink);
+  font-weight:400;
+  margin-top:0px;
+}
+/* 点击诗句显现小字提示：华文仿宋，不加粗，清秀淡雅 */
+.p2-intro-hint{
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-size:11.5px;
+  letter-spacing:.26em;
+  color:var(--muted);
+  font-weight:400;
+  opacity:.75;
+  margin-top:-2px;
+}
+
+/* 古风长卷纸面容器：恢复保持原有的细长长卷造型（修长窄款 max-width: 320px，高深通透），透明度降至70%，3.5s 展轴展开 */
+.scroll-canvas{
+  position:relative;
+  width:100%;
+  max-width:320px;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  background:linear-gradient(to bottom, rgba(247, 250, 246, 0.70) 0%, rgba(241, 246, 240, 0.70) 100%);
+  border:1px solid rgba(210, 222, 211, 0.75);
+  box-shadow:0 12px 32px rgba(26, 36, 28, 0.04);
+  border-radius:2px;
+  padding:36px 14px 44px;
+  backdrop-filter:blur(3px);
+  opacity:0;
+  transform:scaleY(0.65);
+  transform-origin:top center;
+  transition:opacity 3.5s cubic-bezier(.16, 1, .3, 1), transform 3.5s cubic-bezier(.16, 1, .3, 1);
+  box-sizing:border-box;
+}
+.scroll-canvas.show{
+  opacity:1;
+  transform:scaleY(1);
+}
+[data-theme="dark"] .scroll-canvas{
+  background:linear-gradient(to bottom, rgba(23, 34, 26, 0.70) 0%, rgba(17, 26, 20, 0.70) 100%);
+  border-color:rgba(28, 41, 31, 0.7);
+  box-shadow:0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* 长卷上下古卷轴饰条 */
+.scroll-rod{
+  position:absolute;
+  left:-8px;
+  right:-8px;
+  height:4px;
+  background:linear-gradient(to right, #1a251c 0%, #475a4b 50%, #1a251c 100%);
+  border-radius:2px;
+  box-shadow:0 2px 5px rgba(0,0,0,.15);
+}
+.scroll-rod.top{top:-2px}
+.scroll-rod.bottom{bottom:-2px}
+
+/* 五组竖排诗句：自然波浪错落悬挂，细长修长错落排布，点击诗句交互显现 */
+.verse-chain-list{
+  position:relative;
+  display:flex;
+  flex-direction:row-reverse;
+  justify-content:center;
+  gap:16px;
+  min-height:430px;
+  padding:14px 6px 18px;
+  box-sizing:border-box;
+}
+
+/* 单条信笺纵列：细长垂直流，可点击交互 */
+.verse-chain-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity 1.8s ease, transform 1.8s cubic-bezier(.22, 1, .36, 1);
+  flex:1;
+  cursor:pointer;
+}
+.verse-chain-item.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* 优雅的阶梯起伏波浪错落（1高 ➔ 2中 ➔ 3低 ➔ 4微高 ➔ 5居中错落，极具细长流丽韵味） */
+.verse-chain-item.stagger-1{margin-top:0px}
+.verse-chain-item.stagger-2{margin-top:68px}
+.verse-chain-item.stagger-3{margin-top:22px}
+.verse-chain-item.stagger-4{margin-top:86px}
+.verse-chain-item.stagger-5{margin-top:40px}
+
+/* 完整经典诗句竖排：单字从上至下、字距舒朗古雅，带轻微悬停触感 */
+.chain-verse{
+  writing-mode:vertical-rl;
+  -webkit-writing-mode:vertical-rl;
+  text-orientation:upright;
+  -webkit-text-orientation:upright;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:clamp(12px, 2.8vw, 14.5px);
+  letter-spacing:.32em;
+  color:var(--ink);
+  line-height:1.25;
+  white-space:nowrap;
+  position:relative;
+  transition:color .3s ease, transform .3s ease;
+  padding:4px 2px;
+}
+.verse-chain-item:hover .chain-verse{
+  color:var(--muted);
+  transform:scale(1.03);
+}
+
+/* 掉落下方的丝线悬挂区：默认收拢隐藏，点击诗句后优雅坠落生长显现 */
+.chain-drop-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  opacity:0;
+  transform:translateY(-18px) scaleY(0.7);
+  transform-origin:top center;
+  transition:all .9s cubic-bezier(.34, 1.4, .64, 1);
+  pointer-events:none;
+}
+.verse-chain-item.revealed .chain-drop-wrap{
+  opacity:1;
+  transform:translateY(0) scaleY(1);
+  pointer-events:auto;
+}
+
+/* 竖直垂落的纤细丝线，将诗句与下方中式框相连 */
+.chain-cord{
+  width:1px;
+  height:24px;
+  background:linear-gradient(to bottom, var(--muted) 0%, var(--faint) 75%, rgba(157, 176, 161, 0.25) 100%);
+  margin:5px 0;
+  position:relative;
+}
+.chain-cord::after{
+  content:'';
+  position:absolute;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:2.5px;
+  height:2.5px;
+  border-radius:50%;
+  background:var(--muted);
+}
+
+/* 中式长方竖框：框起自我介绍关键词（不加粗，保持清瘦秀劲） */
+.kw-box{
+  border:1.1px solid var(--muted);
+  border-radius:1px;
+  padding:6px 4px;
+  background:rgba(255, 255, 255, 0.5);
+  box-shadow:inset 0 0 0 0.5px rgba(255, 255, 255, 0.5), 0 2px 5px rgba(0,0,0,.03);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:24px;
+  transition:all .3s ease;
+}
+[data-theme="dark"] .kw-box{
+  background:rgba(23, 34, 26, 0.55);
+  border-color:var(--muted);
+}
+.kw-box:hover{
+  border-color:var(--ink);
+  transform:scale(1.06);
+}
+.kw-text{
+  writing-mode:vertical-rl;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:clamp(11.5px, 2.7vw, 13.5px);
+  font-weight:400;
+  letter-spacing:.26em;
+  color:var(--ink);
+  line-height:1.15;
+}
+
+/* 卷轴底部横向排列祝福诗句：“明朝明朝待明朝，只願卿卿意逍遙”（繁体，居中横排，无印章） */
+.scroll-footer-row{
+  margin-top:22px;
+  text-align:center;
+  border-top:1px dashed rgba(210, 222, 211, 0.6);
+  padding-top:14px;
+}
+.scroll-footer-verse{
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:clamp(11.5px, 2.8vw, 13px);
+  letter-spacing:.36em;
+  color:var(--muted);
+  line-height:1.6;
+  white-space:nowrap;
+  display:inline-block;
+}
+.p2-mini-seal{
+  width:18px;
+  height:30px;
+  border:1px solid rgba(168, 52, 42, .75);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-around;
+  padding:2px 1px;
+}
+.p2-mini-seal span{
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:9px;
+  color:rgba(168, 52, 42, .85);
+  font-weight:900;
+  line-height:1;
+}
+.p2-seal-verse{
+  writing-mode:vertical-rl;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:10px;
+  letter-spacing:.3em;
+  color:var(--faint);
+  line-height:1.4;
+}
+
+
+
+
+/* 第二页：古风长卷样式 */
+
+/* 扇面上边缘弧度连贯的细压线，勾勒出大扇面的整片连绵轮廓 */
+/* ========================================================
+   第三页：落墨成章 · 墨化水痕（全屏宣纸与指尖晕墨交互）
+   ======================================================== */
+.stage-page3{
+  position:relative;
+  width:100vw;
+  min-height:100vh;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:80px 20px;
+  overflow:hidden;
+}
+.p3-canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  cursor:pointer;
+  z-index:1;
+}
+.p3-wrap{
+  position:relative;
+  z-index:5;
+  max-width:540px;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  pointer-events:none;
+}
+.p3-head-tag{
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:11px;
+  letter-spacing:.4em;
+  color:var(--faint);
+  margin-bottom:8px;
+  opacity:0;
+  transition:opacity 2s ease;
+}
+.p3-title{
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:clamp(17px, 4vw, 21px);
+  letter-spacing:.32em;
+  color:var(--ink);
+  margin-bottom:34px;
+  opacity:0;
+  transform:translateY(16px);
+  transition:all 2s ease;
+}
+.p3-text-box{
+  position:relative;
+  display:flex;
+  flex-direction:row-reverse;
+  align-items:flex-start;
+  gap:26px;
+  min-height:220px;
+  padding:10px 0;
+}
+.p3-verse-col{
+  writing-mode:vertical-rl;
+  -webkit-writing-mode:vertical-rl;
+  text-orientation:upright;
+  -webkit-text-orientation:upright;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:clamp(14px, 3.2vw, 16px);
+  letter-spacing:.32em;
+  line-height:1.5;
+  color:var(--ink);
+  opacity:0;
+  transform:translateY(14px);
+  filter:blur(5px);
+  transition:all 1.8s cubic-bezier(.16,1,.3,1);
+}
+.p3-verse-col.revealed{
+  opacity:1;
+  transform:translateY(0);
+  filter:blur(0);
+}
+.p3-author-col{
+  writing-mode:vertical-rl;
+  -webkit-writing-mode:vertical-rl;
+  text-orientation:upright;
+  -webkit-text-orientation:upright;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.36em;
+  line-height:1.4;
+  align-self:flex-end;
+  margin-top:70px;
+  opacity:0;
+  filter:blur(4px);
+  transition:all 1.8s cubic-bezier(.16,1,.3,1) 0.3s;
+}
+.p3-author-col.revealed{
+  opacity:.72;
+  filter:blur(0);
+}
+.p3-hint{
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-size:12px;
+  letter-spacing:.26em;
+  color:var(--muted);
+  margin-top:20px;
+  margin-bottom:34px;
+  opacity:0;
+  transition:opacity 1s ease;
+}
+
+/* 第三页靠下详细特质介绍：绑定第4下落墨解锁，墨痕水纹散逸流，不抢首屏动效 */
+.p3-traits-panel{
+  width:auto;
+  max-width:540px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+  padding:20px 6px 0;
+  border-top:1px solid rgba(87, 107, 91, 0.22);
+  position:relative;
+  opacity:0;
+  transform:translateY(18px);
+  filter:blur(6px);
+  transition:opacity 2s ease, transform 2s cubic-bezier(.16,1,.3,1), filter 2s ease;
+  pointer-events:none;
+}
+.p3-traits-panel.revealed{
+  opacity:1;
+  transform:translateY(0);
+  filter:blur(0);
+  pointer-events:auto;
+}
+.p3-traits-panel::before{
+  content:'';
+  position:absolute;
+  top:-1px;
+  left:50%;
+  transform:translateX(-50%);
+  width:50px;
+  height:1.5px;
+  background:var(--ink);
+  opacity:.4;
+}
+.p3-trait-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  width:auto;
+  flex-wrap:nowrap;
+}
+.p3-trait-row.reverse-row{
+  flex-direction:row-reverse;
+}
+.p3-trait-label{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+}
+.p3-trait-dot{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:var(--ink);
+  opacity:.65;
+}
+.p3-trait-name{
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:13.5px;
+  letter-spacing:.26em;
+  color:var(--ink);
+  font-weight:600;
+  white-space:nowrap;
+}
+.p3-trait-tags{
+  display:flex;
+  flex-wrap:nowrap;
+  align-items:center;
+  justify-content:center;
+  gap:6px 8px;
+  white-space:nowrap;
+}
+.p3-trait-row.reverse-row .p3-trait-tags{
+  justify-content:center;
+}
+.p3-tag-leaf{
+  position:relative;
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-size:clamp(12px, 2.7vw, 13.5px);
+  letter-spacing:.14em;
+  color:var(--ink);
+  opacity:.86;
+  line-height:1;
+  white-space:nowrap;
+  transition:all .4s ease;
+  cursor:default;
+}
+.p3-tag-leaf:hover{
+  opacity:1;
+  color:var(--ink);
+  transform:translateY(-1.5px);
+  text-shadow:0 0 1px rgba(26,36,28,0.3);
+}
+.p3-tag-sep{
+  font-size:10px;
+  color:var(--muted);
+  opacity:.45;
+  user-select:none;
+}
+@media(max-width:560px){
+  .p3-traits-panel{
+    padding:16px 2px 0;
+    gap:14px;
+  }
+  .p3-trait-row{
+    gap:8px;
+  }
+  .p3-trait-tags{
+    gap:4px 6px;
+  }
+  .p3-tag-leaf{
+    letter-spacing:.1em;
+  }
+}
+
+/* ========================================================
+   第四、五、六页全局灵鱼引水漫游系统（彻底设为 pointer-events: none，绝不遮挡下层手札与按钮点击）
+   ======================================================== */
+.global-fish-canvas{
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  pointer-events:none !important;
+  z-index:18;
+  opacity:0;
+  transition:opacity 1.8s ease;
+}
+.global-fish-canvas.active{
+  opacity:1;
+}
+
+/* ========================================================
+   第四页：靈魚引水 · 蕩水映字（五尾水墨靈魚仿生游弋互動）
+   ======================================================== */
+.stage-page4{
+  position:relative;
+  width:100vw;
+  min-height:100vh;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:80px 20px;
+  overflow:hidden;
+}
+.p4-wrap{
+  position:relative;
+  z-index:20;
+  max-width:480px;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  pointer-events:none;
+}
+.p4-head-tag{
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:11px;
+  letter-spacing:.4em;
+  color:var(--faint);
+  margin-bottom:8px;
+  opacity:0;
+  transition:opacity 2s ease;
+}
+.p4-title{
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:clamp(17px, 4vw, 21px);
+  letter-spacing:.32em;
+  color:var(--ink);
+  margin-bottom:32px;
+  opacity:0;
+  transform:translateY(16px);
+  transition:all 2s ease;
+}
+.p4-verse-box{
+  position:relative;
+  display:flex;
+  flex-direction:row-reverse;
+  align-items:flex-start;
+  gap:24px;
+  min-height:220px;
+  padding:10px 0;
+}
+.p4-verse-col{
+  writing-mode:vertical-rl;
+  -webkit-writing-mode:vertical-rl;
+  text-orientation:upright;
+  -webkit-text-orientation:upright;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:clamp(14px, 3.2vw, 16px);
+  letter-spacing:.34em;
+  line-height:1.6;
+  color:var(--ink);
+  opacity:0.50;
+  filter:blur(1.8px);
+  transform:scale(0.98);
+  transition:all 1.2s cubic-bezier(.16,1,.3,1);
+}
+.p4-verse-col.revealed{
+  opacity:0.95;
+  filter:blur(0);
+  transform:scale(1);
+  text-shadow:0 0 14px rgba(87,107,91,0.22);
+}
+.p4-author-col{
+  writing-mode:vertical-rl;
+  -webkit-writing-mode:vertical-rl;
+  text-orientation:upright;
+  -webkit-text-orientation:upright;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.36em;
+  line-height:1.4;
+  align-self:flex-end;
+  margin-top:50px;
+  opacity:0.42;
+  filter:blur(1.5px);
+  transition:all 1.2s ease .2s;
+}
+.p4-author-col.revealed{
+  opacity:0.80;
+  filter:blur(0);
+}
+.p4-hint{
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-size:12px;
+  letter-spacing:.26em;
+  color:var(--muted);
+  margin-top:26px;
+  opacity:0;
+  transition:opacity 1s ease;
+}
+
+/* ========================================================
+   第五页：仿真风琴折子（初始即自然半展开、三折立体折痕凹凸与阴影）
+   ======================================================== */
+.stage-page5{
+  position:relative;
+  width:100vw;
+  min-height:100vh;
+  z-index:20;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:80px 20px;
+}
+.p5-wrap{
+  max-width:560px;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  position:relative;
+  z-index:30;
+  pointer-events:auto;
+}
+.p5-head-tag{
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:11px;
+  letter-spacing:.4em;
+  color:var(--faint);
+  margin-bottom:8px;
+  opacity:0;
+  transition:opacity 2s ease;
+}
+.p5-title{
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:clamp(17px, 4vw, 21px);
+  letter-spacing:.32em;
+  color:var(--ink);
+  margin-bottom:28px;
+  opacity:0;
+  transform:translateY(16px);
+  transition:all 2s ease;
+}
+
+/* 仿真正宗案头风琴手札（默认即为展开状态，带古典折痕与微小书签） */
+.p5-accordion-book{
+  position:relative;
+  display:flex;
+  flex-direction:row-reverse;
+  align-items:stretch;
+  perspective:1200px;
+  cursor:pointer;
+  transition:all .5s cubic-bezier(.16,1,.3,1);
+  box-shadow:0 16px 36px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.03);
+  background:#f9fcf8;
+  border-radius:2px;
+  border:1px solid #c8d6ca;
+  padding:6px;
+}
+.p5-accordion-book:hover{
+  transform:translateY(-4px);
+  box-shadow:0 22px 48px rgba(0,0,0,0.09);
+}
+
+/* 风琴单折页：带凹凸光影与真实折痕线 */
+.p5-fold-leaf{
+  position:relative;
+  min-width:96px;
+  padding:26px 14px 22px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  background:linear-gradient(to right, rgba(255,255,255,0.7) 0%, #f7faf5 45%, rgba(225,236,226,0.35) 100%);
+  border-right:1px solid rgba(160, 180, 165, 0.45);
+  box-shadow:inset -3px 0 6px rgba(0,0,0,0.02), inset 3px 0 6px rgba(255,255,255,0.8);
+  transition:all .4s ease;
+}
+.p5-fold-leaf:last-child{
+  border-right:none;
+}
+/* 凸折（山折光影） */
+.p5-fold-leaf.leaf-hill{
+  background:linear-gradient(105deg, #ffffff 0%, #f9fcf8 70%, #edf4ec 100%);
+}
+/* 凹折（谷折阴影） */
+.p5-fold-leaf.leaf-valley{
+  background:linear-gradient(95deg, #edf4ec 0%, #f5f8f3 80%, rgba(0,0,0,0.03) 100%);
+  filter:brightness(0.98);
+}
+
+/* 封面签条折（最右第一折）：贴有典雅微型竖签，缩小至50% */
+.p5-fold-seal-strip{
+  position:absolute;
+  top:14px;
+  right:8px;
+  border:0.8px solid var(--ink);
+  padding:4px 2px;
+  writing-mode:vertical-rl;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:7.5px;
+  line-height:1;
+  letter-spacing:.15em;
+  background:rgba(240,244,239,0.75);
+  color:var(--ink);
+  transform:scale(0.85);
+  transform-origin:top right;
+}
+
+.p5-fold-text{
+  writing-mode:vertical-rl;
+  -webkit-writing-mode:vertical-rl;
+  text-orientation:upright;
+  -webkit-text-orientation:upright;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:13.5px;
+  letter-spacing:.28em;
+  line-height:1.6;
+  color:var(--ink);
+  white-space:nowrap;
+  margin-top:14px;
+}
+.p5-fold-sub{
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-size:11px;
+  letter-spacing:.2em;
+  color:var(--muted);
+  margin-top:10px;
+}
+
+/* 铺开全屏大页面模态层（点击折子时全幅铺展） */
+.p5-modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(18, 26, 20, 0.65);
+  backdrop-filter:blur(8px);
+  z-index:999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:all .5s cubic-bezier(.16,1,.3,1);
+  padding:20px;
+}
+.p5-modal-overlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+.p5-grand-paper{
+  position:relative;
+  width:100%;
+  max-width:820px;
+  max-height:90vh;
+  background:radial-gradient(circle at 50% 30%, #ffffff 0%, #f7faf6 75%, #edf3eb 100%);
+  border:1px solid var(--line);
+  box-shadow:0 24px 60px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.9);
+  border-radius:4px;
+  padding:36px 32px 30px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  overflow:hidden;
+  transform:scale(0.92) translateY(20px);
+  transition:all .5s cubic-bezier(.16,1,.3,1);
+}
+.p5-modal-overlay.open .p5-grand-paper{
+  transform:scale(1) translateY(0);
+}
+.p5-modal-close{
+  position:absolute;
+  top:16px;
+  right:20px;
+  background:none;
+  border:1px solid rgba(87,107,91,0.3);
+  border-radius:50%;
+  width:30px;
+  height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:15px;
+  color:var(--ink);
+  transition:all .3s ease;
+  z-index:10;
+}
+.p5-modal-close:hover{
+  border-color:var(--ink);
+  transform:scale(1.1);
+}
+.p5-modal-content{
+  width:100%;
+  display:flex;
+  flex-direction:row-reverse;
+  justify-content:flex-start;
+  align-content:flex-start;
+  flex-wrap:wrap;
+  gap:8px 12px;
+  margin-top:16px;
+  height:auto;
+  max-height:68vh;
+  overflow:hidden;
+}
+.p5-notice-col{
+  writing-mode:vertical-rl;
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-size:13px;
+  font-weight:400;
+  letter-spacing:.16em;
+  line-height:1.15;
+  color:var(--ink);
+  max-height:56vh;
+  white-space:normal;
+  padding:1px 0;
+}
+.p5-notice-col.highlight{
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-weight:400;
+  color:var(--ink);
+  letter-spacing:.16em;
+}
+.p5-notice-col.accent{
+  color:var(--vermilion);
+  font-size:11.5px;
+  align-self:flex-end;
+  margin-top:24px;
+  font-weight:400;
+  white-space:nowrap;
+}
+@media(max-width:560px){
+  .p5-grand-paper{
+    padding:30px 16px 20px;
+    overflow-y:auto;
+  }
+  .p5-modal-content{
+    flex-direction:column;
+    flex-wrap:nowrap;
+    max-height:none;
+    overflow:visible;
+    gap:8px;
+    align-items:flex-start;
+  }
+  .p5-notice-col{
+    writing-mode:horizontal-tb;
+    max-height:none;
+    font-size:12.5px;
+    line-height:1.25;
+    letter-spacing:.06em;
+    text-align:left;
+  }
+  .p5-notice-col.accent{
+    align-self:flex-start;
+    margin-top:6px;
+  }
+}
+.p5-hint{
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-size:12px;
+  letter-spacing:.26em;
+  color:var(--muted);
+  margin-top:20px;
+  opacity:0;
+  transition:opacity 1s ease;
+}
+
+/* ========================================================
+   第六页：余韵 · 见字逍遥 / 卷末心安（字框跳转三大新分支页面）
+   ======================================================== */
+.stage-page6{
+  position:relative;
+  width:100vw;
+  min-height:100vh;
+  z-index:20;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:70px 20px 80px;
+}
+.p6-wrap{
+  max-width:340px;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:22px;
+  position:relative;
+  z-index:25;
+}
+.p6-verse-col{
+  writing-mode:vertical-rl;
+  -webkit-writing-mode:vertical-rl;
+  text-orientation:upright;
+  -webkit-text-orientation:upright;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:clamp(16px, 3.8vw, 19px);
+  letter-spacing:.38em;
+  color:var(--ink);
+  line-height:1.7;
+  height:170px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  opacity:0;
+  transform:translateY(20px);
+  transition:all 2.4s ease;
+}
+.p6-verse-col.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.p6-verse-line{
+  display:flex;
+  align-items:center;
+  white-space:nowrap;
+}
+
+/* “晴”“處”“生”三字方框跳轉觸發器 */
+.char-link-box{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--ink);
+  padding:2px 4px;
+  margin:2px 0;
+  cursor:pointer;
+  transition:all .3s ease;
+  background:rgba(247, 250, 246, 0.45);
+  box-shadow:0 2px 6px rgba(0,0,0,0.04);
+}
+.char-link-box:hover{
+  background:var(--ink);
+  color:var(--paper);
+  transform:scale(1.12);
+  box-shadow:0 4px 12px rgba(26,36,28,0.18);
+}
+
+.p6-seal{
+  width:28px;
+  height:46px;
+  border:1.5px solid rgba(168, 52, 42, .85);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-around;
+  padding:3px 2px;
+  background:rgba(168, 52, 42, .05);
+  margin:10px auto;
+}
+.p6-seal span{
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:12px;
+  color:rgba(168, 52, 42, .9);
+  font-weight:900;
+  line-height:1;
+}
+.p6-return-btn{
+  cursor:pointer;
+  background:none;
+  border:1px solid var(--line);
+  color:var(--ink);
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:12px;
+  letter-spacing:.3em;
+  padding:9px 24px;
+  margin-top:16px;
+  transition:all .3s ease;
+  pointer-events:auto;
+}
+.p6-return-btn:hover{
+  border-color:var(--ink);
+  background:var(--paper);
+}
+
+/* ========================================================
+   三大独立分支页面模态容器（共用原版背景图、同等透明度、纯粹沉浸）
+   ======================================================== */
+.branch-view-overlay{
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  z-index:900;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  overflow-y:auto;
+  padding:60px 20px 80px;
+  background:transparent;
+  opacity:0;
+  transition:opacity .6s ease;
+}
+.branch-view-overlay.active{
+  display:flex;
+  opacity:1;
+}
+
+/* 顶部与底部的返回控制 */
+.branch-top-bar{
+  width:100%;
+  max-width:880px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:28px;
+  z-index:20;
+}
+.branch-close-btn{
+  background:rgba(255,255,255,0.7);
+  border:1px solid var(--line);
+  color:var(--ink);
+  padding:6px 16px;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:12px;
+  letter-spacing:.2em;
+  cursor:pointer;
+  border-radius:2px;
+  transition:all .3s ease;
+}
+.branch-close-btn:hover{
+  border-color:var(--ink);
+  background:var(--paper);
+}
+.branch-bottom-return{
+  margin-top:40px;
+  margin-bottom:20px;
+  z-index:20;
+}
+
+/* 分支一【晴 · 话术展示页面】：img001 ~ img009 典雅画廊瀑布网格 */
+.gallery-grid{
+  width:100%;
+  max-width:880px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+  gap:22px;
+  z-index:20;
+}
+.gallery-card{
+  background:rgba(255,255,255,0.75);
+  border:1px solid rgba(87,107,91,0.22);
+  padding:10px 10px 14px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.04);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  transition:all .4s ease;
+}
+.gallery-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 14px 32px rgba(0,0,0,0.08);
+  border-color:var(--ink);
+}
+.gallery-card img{
+  width:100%;
+  height:260px;
+  object-fit:cover;
+  display:block;
+  filter:contrast(1.02);
+}
+.gallery-tag{
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-size:12px;
+  letter-spacing:.25em;
+  color:var(--muted);
+}
+
+/* 分支二【处 · 仿古信纸】：华文仿宋不加粗、真挚爱意与谢意 */
+.antique-letter-paper{
+  width:100%;
+  max-width:620px;
+  background:linear-gradient(to bottom, #fcfefb 0%, #f7faf5 100%);
+  border:1px solid #c8d6ca;
+  box-shadow:0 16px 48px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(255,255,255,0.9);
+  padding:50px 38px 46px;
+  position:relative;
+  z-index:20;
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+}
+.antique-letter-paper::before{
+  content:'';
+  position:absolute;
+  inset:14px;
+  border:1px dashed rgba(87,107,91,0.25);
+  pointer-events:none;
+}
+.letter-title{
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-size:18px;
+  letter-spacing:.28em;
+  font-weight:400;
+  color:var(--ink);
+  text-align:left;
+  border-bottom:1px solid rgba(87,107,91,0.18);
+  padding-bottom:12px;
+}
+.letter-body{
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-size:14.5px;
+  letter-spacing:.18em;
+  line-height:2.1;
+  font-weight:400;
+  color:var(--ink);
+  text-align:justify;
+  text-indent:2em;
+}
+.letter-foot{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:8px;
+  margin-top:14px;
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-size:13px;
+  letter-spacing:.22em;
+  font-weight:400;
+  color:var(--muted);
+}
+
+/* 分支三【生 · 板评展示页】：10个雅致评价展示槽位 */
+.review-grid{
+  width:100%;
+  max-width:860px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));
+  gap:20px;
+  z-index:20;
+}
+.review-card{
+  background:rgba(255,255,255,0.72);
+  border:1px solid rgba(87,107,91,0.2);
+  padding:12px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.03);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  transition:all .3s ease;
+}
+.review-card:hover{
+  border-color:var(--ink);
+  transform:translateY(-3px);
+}
+.review-img-box{
+  width:100%;
+  height:180px;
+  background:rgba(235, 242, 236, 0.6);
+  border:1px dashed rgba(87,107,91,0.3);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  color:var(--muted);
+  overflow:hidden;
+}
+.review-img-box img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.review-tag{
+  font-family:"STFangsong","FangSong","华文仿宋","仿宋",serif;
+  font-size:12px;
+  letter-spacing:.2em;
+  color:var(--ink);
+  text-align:center;
+}
+
+@media(max-width:560px){
+  .p4-album-stack.spread .p4-card:nth-child(1){ transform:translateX(-45px) rotate(-8deg); }
+  .p4-album-stack.spread .p4-card:nth-child(3){ transform:translateX(45px) rotate(8deg); }
+}
+</style>
+</head>
+<body>
+
+<img class="bg-art" src="images/img-aa1.jpg" alt="">
+
+<audio id="bgm" loop preload="none"><source src="audio/youyuan.mp3" type="audio/mpeg"></audio>
+
+<div class="scroll-wrapper">
+  <!-- 第一页：十六档大折扇 + 诗意题词（全部繁体、右上竖列、左下落款、底部居中箭头） -->
+  <section class="stage" id="page1">
+    <!-- 左上角古风信笺压角：朱砂私印 + 纤细竖排引首小字（繁体：微風拂折竹青淺） -->
+    <div class="letter-crest">
+      <div class="seal-stamp" title="周洇印">
+        <span>周</span>
+        <span>洇</span>
+      </div>
+      <p class="crest-verse">微風拂折竹青淺</p>
+    </div>
+
+    <!-- 音乐独立圆形开关置于左上角 -->
+    <button class="music-circle-btn" id="musicBtn" aria-label="音樂開關" title="音樂開關">♫</button>
+
+    <div class="fan-viewport" id="viewport">
+      <!-- 右上竖列文案一：定位于扇子自身右上角，无论屏幕多宽，与扇面永远保持固定贴合 -->
+      <div class="fan-above">
+        <div class="poem-col poem-col-1" id="poemCol1">此情無計可消除</div>
+        <div class="poem-col poem-col-2" id="poemCol2">
+          才下眉頭，卻上<span class="drop-slot">心<span class="drop-track"><span class="poem-drop" id="poemDrop">💧</span></span>頭</span>
+        </div>
+      </div>
+
+      <div class="fan-container" id="fan">
+        <!-- 十六档大折扇 -->
+        <div class="rib outer-left pleat-hill" style="--target-deg:-70deg; z-index:16;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-valley" style="--target-deg:-60.67deg; z-index:15;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-hill" style="--target-deg:-51.33deg; z-index:14;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-valley" style="--target-deg:-42deg; z-index:13;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-hill" style="--target-deg:-32.67deg; z-index:12;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-valley" style="--target-deg:-23.33deg; z-index:11;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-hill" style="--target-deg:-14deg; z-index:10;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-valley" style="--target-deg:-4.67deg; z-index:9;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-hill" style="--target-deg:4.67deg; z-index:8;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-valley" style="--target-deg:14deg; z-index:7;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-hill" style="--target-deg:23.33deg; z-index:6;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-valley" style="--target-deg:32.67deg; z-index:5;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-hill" style="--target-deg:42deg; z-index:4;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-valley" style="--target-deg:51.33deg; z-index:3;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib pleat-hill" style="--target-deg:60.67deg; z-index:2;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+        <div class="rib outer-right pleat-valley" style="--target-deg:70deg; z-index:1;"><span class="rib-face"></span><span class="rib-bone"></span></div>
+
+        <!-- 中心折轴（扇钉） -->
+        <div class="fan-pivot" id="pivot"></div>
+
+        <!-- 扇穗 -->
+        <div class="tassel-wrap">
+          <div class="tassel">
+            <div class="tassel-cord"></div>
+            <div class="tassel-bead"></div>
+            <div class="tassel-cord-short"></div>
+            <div class="tassel-knot"></div>
+            <div class="tassel-fringe">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页面左下方竖列排列文案二：“卿卿如晤，見字如面”，末字位于引导箭头一半高度 -->
+    <div class="stage-left-foot">
+      <p class="sub-greeting-vert" id="subGreeting">卿卿如晤，見字如面</p>
+    </div>
+
+    <!-- 底部居中细长竖线箭头：保持最初敲定的第一页版位 -->
+    <a class="scroll-indicator" id="scrollIndicator" href="#page2" title="下滑至第二頁">
+      <div class="indicator-line"></div>
+      <div class="indicator-arrow"></div>
+    </a>
+  </section>
+
+  <!-- 第二页：古风长卷（窄款320px、透明度70%、3.5s自上而下展开、全繁体） -->
+  <section class="stage-page2" id="page2">
+    <!-- 顶部小引（不加粗，缩小10px距离，下设华文仿宋不加粗小字） -->
+    <div class="p2-intro-wrap" id="p2Intro">
+      <p class="p2-intro-tag">—— 案頭小引 · 心緒如織 ——</p>
+      <h2 class="p2-intro-title">或許你想要知道的</h2>
+      <p class="p2-intro-hint">（點擊詩句顯現）</p>
+    </div>
+
+    <!-- 古宣长卷展轴：3.5s 自上而下铺开 -->
+    <div class="scroll-canvas" id="scrollCanvas">
+      <div class="scroll-rod top"></div>
+      <div class="scroll-rod bottom"></div>
+
+      <!-- 五组完整经典名句竖排（细长错落悬挂，点击诗句后下方掉落丝线中式框） -->
+      <div class="verse-chain-list">
+        <!-- 第 1 组（最右）：人生若只如初見 ➔ 周洇 -->
+        <div class="verse-chain-item stagger-1" onclick="toggleRevealKw(this)">
+          <span class="chain-verse">人生若只如初見</span>
+          <div class="chain-drop-wrap">
+            <div class="chain-cord"></div>
+            <div class="kw-box"><span class="kw-text">周洇</span></div>
+          </div>
+        </div>
+
+        <!-- 第 2 组：正當韶華負春光 ➔ 20 -->
+        <div class="verse-chain-item stagger-2" onclick="toggleRevealKw(this)">
+          <span class="chain-verse">正當韶華負春光</span>
+          <div class="chain-drop-wrap">
+            <div class="chain-cord"></div>
+            <div class="kw-box"><span class="kw-text">20</span></div>
+          </div>
+        </div>
+
+        <!-- 第 3 组：我是人間惆悵客 ➔ ISTJ -->
+        <div class="verse-chain-item stagger-3" onclick="toggleRevealKw(this)">
+          <span class="chain-verse">我是人間惆悵客</span>
+          <div class="chain-drop-wrap">
+            <div class="chain-cord"></div>
+            <div class="kw-box"><span class="kw-text">ISTJ</span></div>
+          </div>
+        </div>
+
+        <!-- 第 4 组：心緒凄迷念舊歡 ➔ 天秤 -->
+        <div class="verse-chain-item stagger-4" onclick="toggleRevealKw(this)">
+          <span class="chain-verse">心緒凄迷念舊歡</span>
+          <div class="chain-drop-wrap">
+            <div class="chain-cord"></div>
+            <div class="kw-box"><span class="kw-text">天秤</span></div>
+          </div>
+        </div>
+
+        <!-- 第 5 组（最左）：此生何處不逍遙 ➔ 八無 -->
+        <div class="verse-chain-item stagger-5" onclick="toggleRevealKw(this)">
+          <span class="chain-verse">此生何處不逍遙</span>
+          <div class="chain-drop-wrap">
+            <div class="chain-cord"></div>
+            <div class="kw-box"><span class="kw-text">八無</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 卷轴底部横向排列祝福诗句：“明朝明朝待明朝，只願卿卿意逍遙”（居中横排，无印章） -->
+      <div class="scroll-footer-row">
+        <p class="scroll-footer-verse">明朝明朝待明朝，只願卿卿意逍遙</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第三页：落墨成章 · 墨化水痕 -->
+  <section class="stage-page3" id="page3">
+    <canvas class="p3-canvas" id="p3Canvas"></canvas>
+    <div class="p3-wrap">
+      <p class="p3-head-tag" id="p3Tag">—— 澄心篇 · 落墨留痕 ——</p>
+      <h3 class="p3-title" id="p3Title">心緒如水 · 遇境而安</h3>
+      <div class="p3-text-box">
+        <div class="p3-verse-col" id="p3Col1">行到水窮處</div>
+        <div class="p3-verse-col" id="p3Col2">坐看雲起時</div>
+        <div class="p3-verse-col" id="p3Col3">偶然值林叟，談笑無還期</div>
+        <div class="p3-author-col" id="p3Author">唐 · 王維《終南別業》</div>
+      </div>
+      <p class="p3-hint" id="p3Hint">（輕觸任意處 · 墨化水痕顯詩）</p>
+
+      <!-- 靠下位置详细特质介绍：绝无方框，仿若古籍夹注与流散墨印 -->
+      <div class="p3-traits-panel" id="p3Traits">
+        <div class="p3-trait-row">
+          <div class="p3-trait-label">
+            <span class="p3-trait-dot"></span>
+            <span class="p3-trait-name">主病</span>
+          </div>
+          <div class="p3-trait-tags">
+            <span class="p3-tag-leaf">引導</span><span class="p3-tag-sep">/</span>
+            <span class="p3-tag-leaf">高戀</span><span class="p3-tag-sep">/</span>
+            <span class="p3-tag-leaf">溫和</span><span class="p3-tag-sep">/</span>
+            <span class="p3-tag-leaf">偽下</span><span class="p3-tag-sep">/</span>
+            <span class="p3-tag-leaf">剖析</span><span class="p3-tag-sep">/</span>
+            <span class="p3-tag-leaf">惡俗</span><span class="p3-tag-sep">/</span>
+            <span class="p3-tag-leaf">高擦</span>
+          </div>
+        </div>
+
+        <div class="p3-trait-row reverse-row">
+          <div class="p3-trait-label">
+            <span class="p3-trait-dot"></span>
+            <span class="p3-trait-name">副虐</span>
+          </div>
+          <div class="p3-trait-tags">
+            <span class="p3-tag-leaf">非典型</span><span class="p3-tag-sep">/</span>
+            <span class="p3-tag-leaf">冷淡</span><span class="p3-tag-sep">/</span>
+            <span class="p3-tag-leaf">直白</span><span class="p3-tag-sep">/</span>
+            <span class="p3-tag-leaf">引導</span><span class="p3-tag-sep">/</span>
+            <span class="p3-tag-leaf">剖析</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 第四页：靈魚引水 · 蕩水映字（五尾水墨靈魚仿生游弋，此處喚醒靈魚系統） -->
+  <section class="stage-page4" id="page4">
+    <div class="p4-wrap">
+      <p class="p4-head-tag" id="p4Tag">—— 靈犀篇 · 碧波微瀾 ——</p>
+      <h3 class="p4-title" id="p4Title">魚躍清池 · 水波不興</h3>
+      <div class="p4-verse-box">
+        <div class="p4-verse-col" id="p4Col1">萬象皆流動</div>
+        <div class="p4-verse-col" id="p4Col2">靈魚漾碧波</div>
+        <div class="p4-verse-col" id="p4Col3">風吹心水動，波靜復如初</div>
+        <div class="p4-author-col" id="p4Author">周洇 · 靈犀手記</div>
+      </div>
+      <p class="p4-hint" id="p4Hint">（指尖引魚游弋 · 點水蕩開漣漪喚醒詩文）</p>
+    </div>
+  </section>
+
+  <!-- 第五页：案头手札 · 枕石记（风琴仿真折页，折痕凹凸小字，点击展开大页） -->
+  <section class="stage-page5" id="page5">
+    <div class="p5-wrap">
+      <p class="p5-head-tag" id="p5Tag">—— 緘札篇 · 素履以往 ——</p>
+      <h3 class="p5-title" id="p5Title">行止由心 · 枕石漱流</h3>
+
+      <!-- 仿真展开风琴折子（三折立体山折与谷折，小字镌刻） -->
+      <div class="p5-accordion-book" id="p5Booklet" onclick="openP5Modal()" title="點擊展閱全篇大頁">
+        <div class="p5-fold-leaf leaf-hill">
+          <div class="p5-fold-seal-strip">枕石記</div>
+          <div class="p5-fold-text">凡心所向<br>素履以往</div>
+          <span class="p5-fold-sub">卷首</span>
+        </div>
+        <div class="p5-fold-leaf leaf-valley">
+          <div class="p5-fold-text">生如逆旅<br>一葦以航</div>
+          <span class="p5-fold-sub">經行</span>
+        </div>
+        <div class="p5-fold-leaf leaf-hill">
+          <div class="p5-fold-text">不逐浮世<br>自適其性</div>
+          <span class="p5-fold-sub">自適</span>
+        </div>
+      </div>
+      <p class="p5-hint" id="p5Hint">（輕觸折子 · 展閱全卷大頁）</p>
+    </div>
+  </section>
+
+  <!-- 第五页展开全篇大页面模态层（个人须知专属文案：简体、无加粗、行距0.5磅） -->
+  <div class="p5-modal-overlay" id="p5Modal" onclick="closeP5Modal(event)">
+    <div class="p5-grand-paper" onclick="event.stopPropagation()">
+      <button class="p5-modal-close" onclick="closeP5Modal()" title="收合札记">✕</button>
+      <p class="p5-head-tag" style="opacity:1;margin-bottom:6px;">—— 案头手札 · 见字知心 ——</p>
+      <h3 class="p5-title" style="opacity:1;transform:none;margin-bottom:16px;">个人须知</h3>
+      
+      <div class="p5-modal-content" id="p5ModalContent">
+        <div class="p5-notice-col">请不要对我套以固定期待，我并不一定会按照你所期待的方向走，除指定风格外</div>
+        <div class="p5-notice-col">打字速度适中，并不是快节奏的输出，请不要抓住逻辑漏洞就进行抨击，每个人的逻辑思维角度都是不同的</div>
+        <div class="p5-notice-col">半小时10min内可退/换，一小时15min内可退/换，以此类推</div>
+        <div class="p5-notice-col highlight">个人原因拒生理男板，抱歉</div>
+        <div class="p5-notice-col">单内默认恋人/亲密关系，如有其他特殊情况请提前告知</div>
+        <div class="p5-notice-col highlight">务必告诉我喜雷和称呼，由此引起的不适本人概不负责</div>
+        <div class="p5-notice-col">如有感到冒犯/不舒服的地方，请说出“C”，我会立即停下，安抚你</div>
+        <div class="p5-notice-col">不要插话好不好，同样，在你发言的时候我也不会插嘴</div>
+        <div class="p5-notice-col highlight">拒绝高恋对低无，不要让我热脸贴冷屁股 拜托</div>
+        <div class="p5-notice-col">对于我们的约会内容可自截留作纪念，但请不要在未经我允许的情况下公布/传播</div>
+        <div class="p5-notice-col accent">—— 周洇 · 卷五缄札</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第六页：余韵 · 见字逍遥 / 卷末心安（“晴”“处”“生”三字方框点击跳转，去印章） -->
+  <section class="stage-page6" id="page6">
+    <div class="p6-wrap">
+      <div class="p6-verse-col" id="p6Verse">
+        <div class="p6-verse-line">天高水遠任平<span class="char-link-box" onclick="openBranchPage('sheng')" title="點擊前往板評展示">生</span></div>
+        <div class="p6-verse-line">回首向來蕭瑟<span class="char-link-box" onclick="openBranchPage('chu')" title="點擊閱讀情信">處</span></div>
+        <div class="p6-verse-line">也無風雨也無<span class="char-link-box" onclick="openBranchPage('qing')" title="點擊查看話術展示">晴</span></div>
+      </div>
+      <button class="p6-return-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})">歸 扇 首</button>
+    </div>
+  </section>
+</div>
+
+<!-- ========================================================
+     三大分支独立跳转展示页（同款全屏背景图 + 底部归扇首）
+     ======================================================== -->
+
+<!-- 分支一【晴 · 话术展示页面】：展示 img001 到 img009 -->
+<div class="branch-view-overlay" id="branch-qing">
+  <div class="branch-top-bar">
+    <p class="p5-head-tag" style="opacity:1;margin:0;">—— 卷六分支 · 話術存珍 ——</p>
+    <button class="branch-close-btn" onclick="closeBranchPage()">✕ 退出展閱</button>
+  </div>
+  <h2 class="p4-title" style="opacity:1;transform:none;margin-bottom:28px;">晴 · 話術留影</h2>
+  
+  <div class="gallery-grid">
+    <div class="gallery-card"><img src="images/img-001.jpg" alt="" decoding="async"><span class="gallery-tag">№ 01 · 拾光初見</span></div>
+    <div class="gallery-card"><img src="images/img-002.jpg" alt="" decoding="async"><span class="gallery-tag">№ 02 · 溫言細語</span></div>
+    <div class="gallery-card"><img src="images/img-003.jpg" alt="" decoding="async"><span class="gallery-tag">№ 03 · 浮生共語</span></div>
+    <div class="gallery-card"><img src="images/img-004.jpg" alt="" decoding="async"><span class="gallery-tag">№ 04 · 心意相通</span></div>
+    <div class="gallery-card"><img src="images/img-005.jpg" alt="" decoding="async"><span class="gallery-tag">№ 05 · 朝暮相伴</span></div>
+    <div class="gallery-card"><img src="images/img-006.jpg" alt="" decoding="async"><span class="gallery-tag">№ 06 · 眉間心上</span></div>
+    <div class="gallery-card"><img src="images/img-007.jpg" alt="" decoding="async"><span class="gallery-tag">№ 07 · 靜水深流</span></div>
+    <div class="gallery-card"><img src="images/img-008.jpg" alt="" decoding="async"><span class="gallery-tag">№ 08 · 歲月不息</span></div>
+    <div class="gallery-card"><img src="images/img-009.jpg" alt="" decoding="async"><span class="gallery-tag">№ 09 · 餘韻悠長</span></div>
+  </div>
+
+  <div class="branch-bottom-return">
+    <button class="p6-return-btn" onclick="returnFromBranchToTop()">歸 扇 首</button>
+  </div>
+</div>
+
+<!-- 分支二【处 · 仿古信纸】：华文仿宋不加粗、非古文真挚爱意与谢意 -->
+<div class="branch-view-overlay" id="branch-chu">
+  <div class="branch-top-bar">
+    <p class="p5-head-tag" style="opacity:1;margin:0;">—— 卷六分支 · 見字如晤 ——</p>
+    <button class="branch-close-btn" onclick="closeBranchPage()">✕ 退出展閱</button>
+  </div>
+
+  <div class="antique-letter-paper">
+    <h2 class="letter-title">写给屏幕前愿意驻足的你：</h2>
+    <div class="letter-body">
+      其实从一开始做这个长卷，我就在想，会不会有人愿意耐着性子，一点一点划开长卷、点开那些水墨，一路看到这里。
+    </div>
+    <div class="letter-body">
+      世界总是走得太匆忙，每个人都在赶路，而你却愿意把时间分给我，听我这些慢悠悠的自白，看我那些或许有些清冷、又或许有些笨拙的小心思。真的很谢谢你，谢谢你愿意点进来，谢谢你一路陪我走到这卷册的末尾。
+    </div>
+    <div class="letter-body">
+      我不是一个很擅长把喜欢和心动挂在嘴边的人，但我所有想对你表达的真诚与温度，都悄悄藏在这折扇的开合里、游鱼的摆尾间了。能在这个浩大的人间与你相遇、让你看到最真实的周洇，是我觉得极其幸运的事情。
+    </div>
+    <div class="letter-body">
+      很高兴遇见你，真的。无论窗外是风是雨，愿你心中长存晴朗。无论何时你想起我，我都一直在这里。
+    </div>
+    <div class="letter-foot">
+      <span>周洇 · 亲笔</span>
+      <span>记于风止心安之时</span>
+    </div>
+  </div>
+
+  <div class="branch-bottom-return">
+    <button class="p6-return-btn" onclick="returnFromBranchToTop()">歸 扇 首</button>
+  </div>
+</div>
+
+<!-- 分支三【生 · 板评展示页】：8~10个雅致评价空位槽 -->
+<div class="branch-view-overlay" id="branch-sheng">
+  <div class="branch-top-bar">
+    <p class="p5-head-tag" style="opacity:1;margin:0;">—— 卷六分支 · 见字铭心 ——</p>
+    <button class="branch-close-btn" onclick="closeBranchPage()">✕ 退出展閱</button>
+  </div>
+  <h2 class="p4-title" style="opacity:1;transform:none;margin-bottom:28px;">生 · 板評回響</h2>
+
+  <div class="review-grid">
+    <div class="review-card">
+      <div class="review-img-box"><img src="images/img-1.jpg" alt="" decoding="async"></div>
+      <p class="review-tag">№ 01 · 溫潤如玉，見字心安</p>
+    </div>
+    <div class="review-card">
+      <div class="review-img-box"><img src="images/img-2.jpg" alt="" decoding="async"></div>
+      <p class="review-tag">№ 02 · 節奏極好，細膩熨帖</p>
+    </div>
+    <div class="review-card">
+      <div class="review-img-box"><img src="images/img-3.jpg" alt="" decoding="async"></div>
+      <p class="review-tag">№ 03 · 溫柔自洽，不落俗套</p>
+    </div>
+    <div class="review-card">
+      <div class="review-img-box"><img src="images/img-4.jpg" alt="" decoding="async"></div>
+      <p class="review-tag">№ 04 · 聽得懂欲言又止的心意</p>
+    </div>
+    <div class="review-card">
+      <div class="review-img-box"><img src="images/img-5.jpg" alt="" decoding="async"></div>
+      <p class="review-tag">№ 05 · 獨特的氛圍感與定力</p>
+    </div>
+    <div class="review-card">
+      <div class="review-img-box"><img src="images/img-6.jpg" alt="" decoding="async"></div>
+      <p class="review-tag">№ 06 · 讓人放下防備的真摯</p>
+    </div>
+    <div class="review-card">
+      <div class="review-img-box">
+        <span style="font-size:24px;opacity:0.4;">✦</span>
+        <span style="font-size:12px;letter-spacing:.2em;">待添新語 · 靜候君音</span>
+      </div>
+      <p class="review-tag">№ 07 · 留白虛位</p>
+    </div>
+    <div class="review-card">
+      <div class="review-img-box">
+        <span style="font-size:24px;opacity:0.4;">✦</span>
+        <span style="font-size:12px;letter-spacing:.2em;">待添新語 · 靜候君音</span>
+      </div>
+      <p class="review-tag">№ 08 · 留白虛位</p>
+    </div>
+    <div class="review-card">
+      <div class="review-img-box">
+        <span style="font-size:24px;opacity:0.4;">✦</span>
+        <span style="font-size:12px;letter-spacing:.2em;">待添新語 · 靜候君音</span>
+      </div>
+      <p class="review-tag">№ 09 · 留白虛位</p>
+    </div>
+    <div class="review-card">
+      <div class="review-img-box">
+        <span style="font-size:24px;opacity:0.4;">✦</span>
+        <span style="font-size:12px;letter-spacing:.2em;">待添新語 · 靜候君音</span>
+      </div>
+      <p class="review-tag">№ 10 · 留白虛位</p>
+    </div>
+  </div>
+
+  <div class="branch-bottom-return">
+    <button class="p6-return-btn" onclick="returnFromBranchToTop()">歸 扇 首</button>
+  </div>
+</div>
+
+<!-- 全局水墨灵鱼引水画布：从第四幕进入后一直常驻游弋，伴随访客滑过第五页手札直至第六页终章 -->
+<canvas class="global-fish-canvas" id="globalFishCanvas"></canvas>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---- Canvas 落雨有痕系统：粗长明显雨丝 + 底部水洼涟漪 ---- */
+  var cvs = document.createElement('canvas');
+  cvs.className = 'rain-canvas';
+  document.body.appendChild(cvs);
+  var ctx = cvs.getContext('2d');
+
+  var W = 0, H = 0;
+  function resize(){
+    W = cvs.width = window.innerWidth;
+    H = cvs.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  var drops = [];
+  var ripples = [];
+  var dropCount = 42; // 清润疏朗的雨意
+
+  for (var i = 0; i < dropCount; i++) {
+    drops.push({
+      x: Math.random() * (W + 200) - 100,
+      y: Math.random() * H,
+      len: Math.random() * 40 + 35,       // 雨丝长度：35~75px
+      thick: Math.random() * 1.0 + 1.1,    // 雨丝粗细：1.1~2.1px
+      speed: Math.random() * 2.5 + 3.0,    // 下落速度大幅放慢（从原先12~21降到3~5.5），丝缕飘落
+      wind: Math.random() * 0.4 + 0.35,    // 随慢速微倾
+      alpha: Math.random() * 0.3 + 0.35    // 清晰柔和
+    });
+  }
+
+  function addRipple(x, y){
+    ripples.push({
+      x: x,
+      y: y,
+      r: 1.5,
+      maxR: Math.random() * 18 + 16,
+      alpha: 0.55,
+      lw: 1.2
+    });
+  }
+
+  function loop(){
+    ctx.clearRect(0, 0, W, H);
+
+    // 纯灰色雨丝与涟漪调色（不受浅绿影响，纯净灰阶）
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var rCol = isDark ? '175, 178, 175' : '120, 122, 120';
+
+    // 绘制雨丝
+    for (var i = 0; i < drops.length; i++) {
+      var d = drops[i];
+      var tailX = d.x - d.wind * (d.len * 0.15);
+      var tailY = d.y - d.len;
+
+      var grad = ctx.createLinearGradient(tailX, tailY, d.x, d.y);
+      grad.addColorStop(0, 'rgba(' + rCol + ', 0)');
+      grad.addColorStop(1, 'rgba(' + rCol + ', ' + d.alpha + ')');
+
+      ctx.beginPath();
+      ctx.moveTo(tailX, tailY);
+      ctx.lineTo(d.x, d.y);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = d.thick;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      d.y += d.speed;
+      d.x += d.wind;
+
+      // 击中屏幕底部（H - 12px ~ H - 2px）触发水痕涟漪
+      if (d.y >= H - Math.random() * 12) {
+        addRipple(d.x, H - Math.random() * 8 - 2);
+        d.y = -d.len - Math.random() * 60;
+        d.x = Math.random() * (W + 200) - 100;
+      }
+    }
+
+    // 绘制雨过留痕（水花波纹慢速荡开）
+    for (var j = ripples.length - 1; j >= 0; j--) {
+      var rp = ripples[j];
+      ctx.beginPath();
+      ctx.ellipse(rp.x, rp.y, rp.r * 2.0, rp.r * 0.65, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(' + rCol + ', ' + rp.alpha + ')';
+      ctx.lineWidth = rp.lw;
+      ctx.stroke();
+
+      rp.r += 0.32;       // 波纹扩展速度减半，缓缓散开
+      rp.alpha -= 0.008;  // 淡出时长翻倍，久留水痕
+
+      if (rp.alpha <= 0 || rp.r >= rp.maxR) {
+        ripples.splice(j, 1);
+      }
+    }
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  /* ---- 主题（安全兼容检查） ---- */
+  var root=document.documentElement;
+  var themeBtn=document.getElementById('themeBtn');
+  function applyTheme(t){
+    root.setAttribute('data-theme',t);
+    var dark=(t==='dark');
+    if(themeBtn){
+      themeBtn.innerHTML='<span class="dot"></span>'+(dark?'Light':'Dark');
+      var dot = themeBtn.querySelector('.dot');
+      if(dot) dot.style.background=dark?'var(--ink)':'var(--muted)';
+    }
+  }
+  if(themeBtn){
+    themeBtn.addEventListener('click',function(){
+      var next=root.getAttribute('data-theme')==='dark'?'light':'dark';
+      applyTheme(next);try{localStorage.setItem('cy-theme',next);}catch(e){}
+    });
+  }
+  try{var saved=localStorage.getItem('cy-theme');if(saved)applyTheme(saved);}catch(e){}
+
+  /* ---- 音乐 ---- */
+  var bgm=document.getElementById('bgm');
+  var musicBtn=document.getElementById('musicBtn');
+  var playing=false;
+  function setPlaying(p){
+    playing=p;
+    if(musicBtn){
+      if(p){
+        musicBtn.classList.add('playing');
+      } else {
+        musicBtn.classList.remove('playing');
+      }
+    }
+  }
+  function toggleMusic(){
+    if(playing){bgm.pause();setPlaying(false);}
+    else{bgm.play().then(function(){setPlaying(true);}).catch(function(){setPlaying(false);});}
+  }
+  if(musicBtn) musicBtn.addEventListener('click',toggleMusic);
+
+  /* ---- 十六档从左往右连贯舒展 + 文案从下往上渐显 (3s) + 滴落灰水滴 ---- */
+  var ribs=document.querySelectorAll('.rib');
+  var poemCol1=document.getElementById('poemCol1');
+  var poemCol2=document.getElementById('poemCol2');
+  var poemDrop=document.getElementById('poemDrop');
+  var subGreeting=document.getElementById('subGreeting');
+
+  function runSweepAnimation(){
+    var stepDelay = 95; // 每一档连贯带出下一档扇面
+    
+    // 扇叶开始打开的那一刻，同步自动触发播放音乐！
+    if(bgm){
+      bgm.muted = false;
+      var playPromise = bgm.play();
+      if(playPromise !== undefined){
+        playPromise.then(function(){
+          setPlaying(true);
+        }).catch(function(err){
+          // 现代浏览器针对未发生任何交互的页面会执行严格的自动播放策略
+          // 此处做全局静默捕获，并在用户任意首次点击/触摸屏幕时立刻瞬时唤醒自动播放
+          console.log('Autoplay deferred for interaction');
+          var resumeAudio = function(){
+            bgm.play().then(function(){
+              setPlaying(true);
+            });
+            window.removeEventListener('click', resumeAudio);
+            window.removeEventListener('touchstart', resumeAudio);
+            window.removeEventListener('scroll', resumeAudio);
+          };
+          window.addEventListener('click', resumeAudio, {once:true});
+          window.addEventListener('touchstart', resumeAudio, {once:true});
+          window.addEventListener('scroll', resumeAudio, {once:true});
+        });
+      }
+    }
+
+    // 扇叶随时间从左向右舒展
+    ribs.forEach(function(rib, index){
+      setTimeout(function(){
+        rib.classList.add('opened');
+      }, 350 + (index * stepDelay));
+    });
+
+    // 右上竖列文案一：前半句“此情無計可消除”先显现 (3s)
+    setTimeout(function(){
+      if(poemCol1) poemCol1.classList.add('show');
+    }, 450);
+
+    // 后半句于前半句中间位置衔接自下而上浮现 (3s)
+    setTimeout(function(){
+      if(poemCol2) poemCol2.classList.add('show');
+    }, 450 + 900);
+
+    // 结尾水滴：隐于心头之间垂直坠落
+    setTimeout(function(){
+      if(poemDrop) poemDrop.classList.add('drop-in');
+    }, 450 + 2800);
+
+    // 页面左下角文案二：“卿卿如晤，見字如面”竖列浮现 (2.5s)
+    setTimeout(function(){
+      if(subGreeting) subGreeting.classList.add('show');
+    }, 450 + 2600);
+
+    // 细长竖线箭头：保持最初敲定的第一页版位，优雅淡出指引第二页
+    setTimeout(function(){
+      var ind = document.getElementById('scrollIndicator');
+      if(ind) ind.classList.add('show');
+    }, 450 + 3800);
+  }
+
+  if(document.readyState === 'complete'){
+    runSweepAnimation();
+  } else {
+    window.addEventListener('load', function(){
+      runSweepAnimation();
+    });
+  }
+
+  /* ---- 第二页古宣长卷（3.5s 自上而下舒展展开）与诗词丝线悬吊错落浮现动效 ---- */
+  var p2Intro = document.getElementById('p2Intro');
+  var scrollCanvas = document.getElementById('scrollCanvas');
+  var chainItems = document.querySelectorAll('.verse-chain-item');
+  var p2Animated = false;
+
+  function runPage2Animation(){
+    if(p2Animated) return;
+    p2Animated = true;
+
+    // 1. 顶部小引“或許你想要知道的”浮现
+    if(p2Intro) p2Intro.classList.add('show');
+
+    // 2. 长卷轴纵向自上往下徐徐展轴展开，时长精确控制在 3.5s
+    setTimeout(function(){
+      if(scrollCanvas) scrollCanvas.classList.add('show');
+    }, 400);
+
+    // 3. 长卷展轴铺平后（3.5s 后），五组竖排完整名句错落依次浮现
+    chainItems.forEach(function(item, idx){
+      setTimeout(function(){
+        item.classList.add('show');
+      }, 400 + 2000 + (idx * 450));
+    });
+  }
+
+  // 点击诗句交互：在诗句下方掉落生长丝线与自我介绍关键词框
+  window.toggleRevealKw = function(el){
+    if(el){
+      el.classList.toggle('revealed');
+    }
+  };
+
+  // 监听滑动进入第二页视口触发
+  var page2El = document.getElementById('page2');
+  if(page2El && 'IntersectionObserver' in window){
+    var p2Observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          runPage2Animation();
+        }
+      });
+    }, { threshold: 0.25 });
+    p2Observer.observe(page2El);
+  } else {
+    window.addEventListener('scroll', function(){
+      if(window.scrollY > window.innerHeight * 0.35){
+        runPage2Animation();
+      }
+    });
+  }
+
+  // 滚动时驱动长图背景产生纵向平滑视差漫步
+  var bgArt = document.querySelector('.bg-art');
+  window.addEventListener('scroll', function(){
+    if(!bgArt) return;
+    var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if(maxScroll > 0){
+      var progress = window.scrollY / maxScroll;
+      // 5屏平滑视差全景漫步
+      bgArt.style.objectPosition = 'center ' + (progress * 85).toFixed(1) + '%';
+    }
+  }, { passive: true });
+
+  /* ---- 第三页：落墨化水与触屏显诗交互系统 ---- */
+  var p3Canvas = document.getElementById('p3Canvas');
+  var p3Tag = document.getElementById('p3Tag');
+  var p3Title = document.getElementById('p3Title');
+  var p3Hint = document.getElementById('p3Hint');
+  var p3Col1 = document.getElementById('p3Col1');
+  var p3Col2 = document.getElementById('p3Col2');
+  var p3Col3 = document.getElementById('p3Col3');
+  var p3Author = document.getElementById('p3Author');
+  var p3Traits = document.getElementById('p3Traits');
+  var p3Animated = false;
+  var p3Clicks = 0;
+  var p3Inks = [];
+
+  if(p3Canvas){
+    var p3Ctx = p3Canvas.getContext('2d');
+    function resizeP3(){
+      p3Canvas.width = p3Canvas.offsetWidth;
+      p3Canvas.height = p3Canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resizeP3);
+    resizeP3();
+
+    function addP3Ink(x, y){
+      // 核心墨晕（较浓、扩散留白、放缓消散）
+      p3Inks.push({
+        x: x, y: y,
+        r: 2,
+        maxR: Math.random() * 26 + 32,
+        alpha: 0.45,
+        fadeSpeed: 0.0024,
+        growSpeed: 0.55,
+        type: 'core'
+      });
+      // 外层涟漪水圈（轻透、扩散范围更广、放缓消散）
+      p3Inks.push({
+        x: x, y: y,
+        r: 6,
+        maxR: Math.random() * 42 + 58,
+        alpha: 0.22,
+        fadeSpeed: 0.0018,
+        growSpeed: 0.8,
+        type: 'halo'
+      });
+    }
+
+    p3Canvas.addEventListener('click', function(e){
+      var rect = p3Canvas.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+      addP3Ink(x, y);
+
+      p3Clicks++;
+      if(p3Hint) p3Hint.style.opacity = '0';
+      if(p3Clicks === 1 && p3Col1){
+        p3Col1.classList.add('revealed');
+      } else if(p3Clicks === 2 && p3Col2){
+        p3Col2.classList.add('revealed');
+      } else if(p3Clicks === 3){
+        if(p3Col3) p3Col3.classList.add('revealed');
+        if(p3Author) p3Author.classList.add('revealed');
+      } else if(p3Clicks >= 4){
+        if(p3Traits) p3Traits.classList.add('revealed');
+      }
+    });
+
+    function drawP3Inks(){
+      p3Ctx.clearRect(0, 0, p3Canvas.width, p3Canvas.height);
+      for(var i = p3Inks.length - 1; i >= 0; i--){
+        var k = p3Inks[i];
+        p3Ctx.beginPath();
+        p3Ctx.arc(k.x, k.y, k.r, 0, Math.PI * 2);
+
+        if(k.type === 'core'){
+          var grad = p3Ctx.createRadialGradient(k.x, k.y, 0, k.x, k.y, k.r);
+          grad.addColorStop(0, 'rgba(40, 55, 45, ' + k.alpha + ')');
+          grad.addColorStop(0.65, 'rgba(75, 95, 80, ' + (k.alpha * 0.75) + ')');
+          grad.addColorStop(1, 'rgba(120, 140, 125, 0)');
+          p3Ctx.fillStyle = grad;
+        } else {
+          var haloGrad = p3Ctx.createRadialGradient(k.x, k.y, k.r * 0.3, k.x, k.y, k.r);
+          haloGrad.addColorStop(0, 'rgba(80, 100, 85, ' + (k.alpha * 0.5) + ')');
+          haloGrad.addColorStop(0.8, 'rgba(110, 130, 115, ' + (k.alpha * 0.8) + ')');
+          haloGrad.addColorStop(1, 'rgba(160, 180, 165, 0)');
+          p3Ctx.fillStyle = haloGrad;
+        }
+        p3Ctx.fill();
+
+        k.r += k.growSpeed;
+        k.alpha -= k.fadeSpeed;
+        if(k.alpha <= 0){
+          p3Inks.splice(i, 1);
+        }
+      }
+      requestAnimationFrame(drawP3Inks);
+    }
+    requestAnimationFrame(drawP3Inks);
+  }
+
+  /* ---- 第五页：仿真风琴折子与大页面弹开交互 ---- */
+  window.openP5Modal = function(){
+    var m = document.getElementById('p5Modal');
+    if(m) m.classList.add('open');
+  };
+  window.closeP5Modal = function(){
+    var m = document.getElementById('p5Modal');
+    if(m) m.classList.remove('open');
+  };
+
+  /* ---- 第六页：“晴”“处”“生”三大分支独立页面跳转控制器 ---- */
+  window.openBranchPage = function(type){
+    var target = document.getElementById('branch-' + type);
+    if(target){
+      target.classList.add('active');
+      target.scrollTo({ top: 0, behavior: 'instant' });
+      document.body.style.overflow = 'hidden'; // 锁定主长卷滚动，进入沉浸分支
+    }
+  };
+
+  window.closeBranchPage = function(){
+    document.querySelectorAll('.branch-view-overlay').forEach(function(el){
+      el.classList.remove('active');
+    });
+    document.body.style.overflow = '';
+  };
+
+  window.returnFromBranchToTop = function(){
+    window.closeBranchPage();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  /* ---- 第四、五、六页：全局靈魚引水常駐系統 ---- */
+  var p4Canvas = document.getElementById('globalFishCanvas');
+  var p4Tag = document.getElementById('p4Tag');
+  var p4Title = document.getElementById('p4Title');
+  var p4Hint = document.getElementById('p4Hint');
+  var p4Col1 = document.getElementById('p4Col1');
+  var p4Col2 = document.getElementById('p4Col2');
+  var p4Col3 = document.getElementById('p4Col3');
+  var p4Author = document.getElementById('p4Author');
+  var p4Animated = false;
+  var p5Animated = false;
+  var p4TouchActive = false;
+  var p4Ripples = [];
+
+  if(p4Canvas){
+    var p4Ctx = p4Canvas.getContext('2d');
+    var p4Target = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+    function resizeP4(){
+      p4Canvas.width = window.innerWidth;
+      p4Canvas.height = window.innerHeight;
+      p4Target.x = window.innerWidth / 2;
+      p4Target.y = window.innerHeight / 2;
+    }
+    window.addEventListener('resize', resizeP4);
+    resizeP4();
+
+    // 五尾高精写意灵鱼（修长水滴流线身姿，双瓣清秀水墨燕尾）
+    var p4Fishes = [
+      // 1.「领头 · 孤傲黑玄」
+      { x: 120, y: 150, angle: 0.5, speed: 2.1, wHead: 4.8, wBody: 6.2, tailLen: 38, color: 'rgba(22, 30, 24, ', tailPhase: 0, turnRate: 0.042, offsetDist: 35, history: [] },
+      // 2.「灵动 · 朱砂锦鲤」
+      { x: 220, y: 320, angle: 3.5, speed: 1.8, wHead: 5.2, wBody: 6.8, tailLen: 42, color: 'rgba(172, 46, 36, ', tailPhase: 2.5, turnRate: 0.055, offsetDist: 50, history: [] },
+      // 3.「稚气 · 贪玩幼鱼」
+      { x: 260, y: 180, angle: 1.8, speed: 2.5, wHead: 3.6, wBody: 4.5, tailLen: 26, color: 'rgba(45, 60, 48, ', tailPhase: 1.2, turnRate: 0.065, offsetDist: 20, history: [] },
+      // 4.「慵懒 · 苍青闲客」
+      { x: 340, y: 260, angle: 4.2, speed: 1.3, wHead: 5.6, wBody: 7.2, tailLen: 44, color: 'rgba(68, 88, 78, ', tailPhase: 4.1, turnRate: 0.032, offsetDist: 65, history: [] },
+      // 5.「冷客 · 素宣白练」
+      { x: 160, y: 380, angle: 5.4, speed: 2.3, wHead: 4.2, wBody: 5.4, tailLen: 35, color: 'rgba(92, 108, 96, ', tailPhase: 5.2, turnRate: 0.048, offsetDist: 42, history: [] }
+    ];
+
+    p4Fishes.forEach(function(f){
+      for(var i=0; i<30; i++){
+        f.history.push({ x: f.x - i * Math.cos(f.angle) * 1.5, y: f.y - i * Math.sin(f.angle) * 1.5 });
+      }
+    });
+
+    function addP4Ripple(x, y){
+      p4Ripples.push({ x: x, y: y, r: 2, maxR: 52, alpha: 0.65 });
+    }
+
+    function triggerP4Verse(){
+      if(p4Col1) p4Col1.classList.add('revealed');
+      setTimeout(function(){ if(p4Col2) p4Col2.classList.add('revealed'); }, 350);
+      setTimeout(function(){
+        if(p4Col3) p4Col3.classList.add('revealed');
+        if(p4Author) p4Author.classList.add('revealed');
+      }, 700);
+    }
+
+  var idleTimer = null;
+  var isSwarming = false; // 是否处于滑动聚集状态
+
+  function resetIdleSwarm(){
+    isSwarming = true;
+    p4TouchActive = true;
+    clearTimeout(idleTimer);
+    // 停止滑动 1.2 秒后判定为“无滑动”，触发鱼群四散游开
+    idleTimer = setTimeout(function(){
+      isSwarming = false;
+      p4TouchActive = false;
+    }, 1200);
+  }
+
+  // 全局捕获指针事件：有滑动时灵鱼聚集到指尖，无滑动时四散开来
+  window.addEventListener('mousemove', function(e){
+    p4Target.x = e.clientX;
+    p4Target.y = e.clientY;
+    resetIdleSwarm();
+  });
+
+  window.addEventListener('touchmove', function(e){
+    if(e.touches.length > 0){
+      p4Target.x = e.touches[0].clientX;
+      p4Target.y = e.touches[0].clientY;
+      resetIdleSwarm();
+    }
+  });
+
+  window.addEventListener('scroll', function(){
+    // 页面滚动时同样判定为滑动，鱼群活跃
+    resetIdleSwarm();
+  }, { passive: true });
+
+    function drawP4MasterFish(f){
+      var h = f.history;
+      var head = h[0];
+      var spine = h[Math.min(9, h.length - 1)];
+      var tailBase = h[Math.min(18, h.length - 1)];
+      var tailTip = h[Math.min(25, h.length - 1)];
+
+      p4Ctx.save();
+
+      var tTime = Date.now() * 0.007 + f.tailPhase;
+      var sway = Math.sin(tTime) * 8;
+      var normTail = f.angle + Math.PI / 2;
+      var tl = f.tailLen || 36;
+
+      // 双瓣水墨小剪尾
+      p4Ctx.beginPath();
+      p4Ctx.moveTo(tailBase.x, tailBase.y);
+      p4Ctx.quadraticCurveTo(
+        tailTip.x + Math.cos(normTail) * 7 + sway * 0.6,
+        tailTip.y + Math.sin(normTail) * 7 + sway * 0.6,
+        tailTip.x + Math.cos(normTail) * 12 - Math.cos(f.angle) * (tl * 0.45) + sway,
+        tailTip.y + Math.sin(normTail) * 12 - Math.sin(f.angle) * (tl * 0.45) + sway
+      );
+      p4Ctx.quadraticCurveTo(
+        tailTip.x - Math.cos(f.angle) * (tl * 0.15) + sway * 0.5,
+        tailTip.y - Math.sin(f.angle) * (tl * 0.15) + sway * 0.5,
+        tailBase.x, tailBase.y
+      );
+      p4Ctx.fillStyle = f.color + '0.24)';
+      p4Ctx.fill();
+
+      p4Ctx.beginPath();
+      p4Ctx.moveTo(tailBase.x, tailBase.y);
+      p4Ctx.quadraticCurveTo(
+        tailTip.x - Math.cos(normTail) * 7 + sway * 0.6,
+        tailTip.y - Math.sin(normTail) * 7 + sway * 0.6,
+        tailTip.x - Math.cos(normTail) * 12 - Math.cos(f.angle) * (tl * 0.45) + sway,
+        tailTip.y - Math.sin(normTail) * 12 - Math.sin(f.angle) * (tl * 0.45) + sway
+      );
+      p4Ctx.quadraticCurveTo(
+        tailTip.x - Math.cos(f.angle) * (tl * 0.15) + sway * 0.5,
+        tailTip.y - Math.sin(f.angle) * (tl * 0.15) + sway * 0.5,
+        tailBase.x, tailBase.y
+      );
+      p4Ctx.fillStyle = f.color + '0.24)';
+      p4Ctx.fill();
+
+      // 水滴流线鱼身
+      p4Ctx.beginPath();
+      var norm = f.angle + Math.PI / 2;
+      var wHead = f.wHead || 5.0;
+      var wBody = f.wBody || 6.5;
+
+      p4Ctx.moveTo(head.x + Math.cos(norm) * wHead, head.y + Math.sin(norm) * wHead);
+      p4Ctx.arc(head.x, head.y, wHead, norm, norm + Math.PI, false);
+      p4Ctx.quadraticCurveTo(spine.x - Math.cos(norm) * wBody, spine.y - Math.sin(norm) * wBody, tailBase.x, tailBase.y);
+      p4Ctx.quadraticCurveTo(spine.x + Math.cos(norm) * wBody, spine.y + Math.sin(norm) * wBody, head.x + Math.cos(norm) * wHead, head.y + Math.sin(norm) * wHead);
+      p4Ctx.closePath();
+
+      var grad = p4Ctx.createLinearGradient(head.x, head.y, tailBase.x, tailBase.y);
+      grad.addColorStop(0, f.color + '0.94)');
+      grad.addColorStop(0.35, f.color + '0.82)');
+      grad.addColorStop(0.80, f.color + '0.45)');
+      grad.addColorStop(1, f.color + '0.20)');
+      p4Ctx.fillStyle = grad;
+      p4Ctx.fill();
+
+      // 半透明薄胸鳍
+      var finPos = h[3] || head;
+      var finL = f.angle + 2.4;
+      var finR = f.angle - 2.4;
+      var finLen = wBody * 1.5;
+
+      p4Ctx.beginPath();
+      p4Ctx.ellipse(finPos.x + Math.cos(finL) * (wHead * 1.1), finPos.y + Math.sin(finL) * (wHead * 1.1), finLen * 0.5, 2.5, finL, 0, Math.PI * 2);
+      p4Ctx.fillStyle = f.color + '0.35)';
+      p4Ctx.fill();
+
+      p4Ctx.beginPath();
+      p4Ctx.ellipse(finPos.x + Math.cos(finR) * (wHead * 1.1), finPos.y + Math.sin(finR) * (wHead * 1.1), finLen * 0.5, 2.5, finR, 0, Math.PI * 2);
+      p4Ctx.fillStyle = f.color + '0.35)';
+      p4Ctx.fill();
+
+      p4Ctx.restore();
+    }
+
+    // 页面水波荡开监听
+    window.addEventListener('click', function(e){
+      var p4Top = page4El ? page4El.offsetTop - 100 : 0;
+      if(window.scrollY >= p4Top){
+        // 如果点击的是折子本体或弹窗，不额外激起水波
+        if(e.target.closest('#p5Booklet') || e.target.closest('#p5Modal')) return;
+        addP4Ripple(e.clientX, e.clientY);
+        triggerP4Verse();
+      }
+    });
+
+    function p4FishLoop(){
+      p4Ctx.clearRect(0, 0, p4Canvas.width, p4Canvas.height);
+
+      for(var r = p4Ripples.length - 1; r >= 0; r--){
+        var rip = p4Ripples[r];
+        p4Ctx.beginPath();
+        p4Ctx.arc(rip.x, rip.y, rip.r, 0, Math.PI * 2);
+        p4Ctx.strokeStyle = 'rgba(87, 107, 91, ' + rip.alpha + ')';
+        p4Ctx.lineWidth = 1.2;
+        p4Ctx.stroke();
+        rip.r += 0.85;
+        rip.alpha -= 0.011;
+        if(rip.alpha <= 0) p4Ripples.splice(r, 1);
+      }
+
+      // 灵鱼行为动力学：有滑动聚集，无滑动自由四散向屏幕四周
+      p4Fishes.forEach(function(f, idx){
+        var tx, ty;
+        if(isSwarming){
+          // 【滑动聚集模式】：五尾鱼环绕并迅速游向指尖/指针
+          var offset = (idx / p4Fishes.length) * Math.PI * 2 + Date.now() * 0.0012;
+          var dist = f.offsetDist || 38;
+          tx = p4Target.x + Math.cos(offset) * dist;
+          ty = p4Target.y + Math.sin(offset) * dist;
+        } else {
+          // 【无滑动四散模式】：五尾鱼各自朝向屏幕四角与外侧大幅四散漫游
+          var scatterAngles = [0.6, 2.2, 3.8, 5.0, 1.4];
+          var ang = scatterAngles[idx % scatterAngles.length] + (Date.now() * 0.0004);
+          var sRadius = Math.min(p4Canvas.width, p4Canvas.height) * 0.42;
+          tx = (p4Canvas.width / 2) + Math.cos(ang) * sRadius;
+          ty = (p4Canvas.height / 2) + Math.sin(ang) * sRadius;
+        }
+
+        var dx = tx - f.x;
+        var dy = ty - f.y;
+        var desAngle = Math.atan2(dy, dx);
+
+        var diff = desAngle - f.angle;
+        while(diff < -Math.PI) diff += Math.PI * 2;
+        while(diff > Math.PI) diff -= Math.PI * 2;
+        var turnK = isSwarming ? (f.turnRate * 1.3 || 0.055) : (f.turnRate * 0.7 || 0.03);
+        f.angle += diff * turnK;
+
+        var spd = isSwarming ? (f.speed * 1.15) : (f.speed * 0.85);
+        f.x += Math.cos(f.angle) * spd;
+        f.y += Math.sin(f.angle) * spd;
+
+        f.history.unshift({ x: f.x, y: f.y });
+        if(f.history.length > 30) f.history.pop();
+
+        drawP4MasterFish(f);
+      });
+
+      requestAnimationFrame(p4FishLoop);
+    }
+    requestAnimationFrame(p4FishLoop);
+  }
+
+  /* ---- 监听进入第3、4、5、6页触发淡入与鱼群跨屏跟随 ---- */
+  var page3El = document.getElementById('page3');
+  var page4El = document.getElementById('page4');
+  var page5El = document.getElementById('page5');
+  var page6El = document.getElementById('page6');
+  var p5Tag = document.getElementById('p5Tag');
+  var p5Title = document.getElementById('p5Title');
+  var p5Hint = document.getElementById('p5Hint');
+
+  // 控制灵鱼在第 4 幕之后常驻显现
+  window.addEventListener('scroll', function(){
+    if(!page4El || !p4Canvas) return;
+    var rect4 = page4El.getBoundingClientRect();
+    // 只要滑到了第四页（顶部进入视口前半段），鱼群画布常驻激活
+    if(rect4.top <= window.innerHeight * 0.75){
+      p4Canvas.classList.add('active');
+    } else {
+      p4Canvas.classList.remove('active');
+    }
+  }, { passive: true });
+
+  if('IntersectionObserver' in window){
+    var globalObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          if(entry.target.id === 'page3' && !p3Animated){
+            p3Animated = true;
+            if(p3Tag) p3Tag.style.opacity = '1';
+            if(p3Title) p3Title.style.opacity = '1';
+            if(p3Title) p3Title.style.transform = 'translateY(0)';
+            if(p3Hint) p3Hint.style.opacity = '1';
+          }
+          if(entry.target.id === 'page4' && !p4Animated){
+            p4Animated = true;
+            if(p4Tag) p4Tag.style.opacity = '1';
+            if(p4Title) p4Title.style.opacity = '1';
+            if(p4Title) p4Title.style.transform = 'translateY(0)';
+            if(p4Hint) p4Hint.style.opacity = '1';
+          }
+          if(entry.target.id === 'page5' && !p5Animated){
+            p5Animated = true;
+            if(p5Tag) p5Tag.style.opacity = '1';
+            if(p5Title) p5Title.style.opacity = '1';
+            if(p5Title) p5Title.style.transform = 'translateY(0)';
+            if(p5Hint) p5Hint.style.opacity = '1';
+          }
+          if(entry.target.id === 'page6'){
+            var p6V = document.getElementById('p6Verse');
+            if(p6V) p6V.classList.add('show');
+          }
+        }
+      });
+    }, { threshold: 0.25 });
+
+    if(page3El) globalObserver.observe(page3El);
+    if(page4El) globalObserver.observe(page4El);
+    if(page5El) globalObserver.observe(page5El);
+    if(page6El) globalObserver.observe(page6El);
+  }
+})();
+</script>
+</body>
+</html>
