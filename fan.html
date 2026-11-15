@@ -257,27 +257,24 @@ body{
 }
 
 /* 诗句双纵列：右上并列竖排，全平台标准竖排前缀与字宽保护 */
-.poem-col,
-.crest-verse,
-.sub-greeting-vert,
-.chain-verse,
-.p3-verse-col,
-.p3-author-col,
-.p4-verse-col,
-.p4-author-col,
-.p5-fold-text,
-.p5-fold-seal-strip,
-.p6-verse-line,
-.char-link-box {
-  writing-mode: vertical-rl;
-  -webkit-writing-mode: vertical-rl;
-  text-orientation: upright;
-  -webkit-text-orientation: upright;
-  letter-spacing: 0.28em;
-  line-height: 1.4;
-  padding-left: 0.2em;
-  padding-right: 0.2em;
-  box-sizing: content-box;
+.poem-col{
+  writing-mode:vertical-rl;
+  -webkit-writing-mode:vertical-rl;
+  text-orientation:upright;
+  -webkit-text-orientation:upright;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.28em;
+  color:var(--ink);
+  line-height:1.4;
+  white-space:nowrap;
+  opacity:0;
+  transform:translateY(16px);
+  transition:opacity 3s cubic-bezier(.22,1,.36,1), transform 3s cubic-bezier(.22,1,.36,1);
+  box-sizing:border-box;
+  width:auto;
+  min-width:1.5em;
 }
 .poem-col.show{
   opacity:1;
@@ -643,16 +640,6 @@ body{
     gap:10px;
   }
   .poem-col{
-  font-family:"Huiwen-mincho","汇文明朝体",serif;
-  font-size:14px;
-  font-weight:600;
-  color:var(--ink);
-  white-space:nowrap;
-  opacity:0;
-  transform:translateY(16px);
-  transition:opacity 3s cubic-bezier(.22,1,.36,1), transform 3s cubic-bezier(.22,1,.36,1);
-  width:auto;
-}
     font-size:13px;
     letter-spacing:.26em;
   }
@@ -819,41 +806,23 @@ body{
     margin-top:40px;
   }
 
-  /* 第五页：仿真风琴折子，全机型严格居中，绝不左偏突出 */
+  /* 第五页：仿真风琴折子，两侧强制留白 50px */
   .stage-page5{
-    padding:60px 20px 70px !important;
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
+    padding:60px 50px 70px !important;
   }
   .p5-wrap{
-    width:100% !important;
-    max-width:360px !important;
-    margin:0 auto !important;
-    display:flex !important;
-    flex-direction:column !important;
-    align-items:center !important;
-    justify-content:center !important;
+    max-width:100% !important;
   }
   .p5-accordion-book{
-    display:flex !important;
-    flex-direction:row-reverse !important;
-    justify-content:center !important;
-    width:auto !important;
-    max-width:300px !important;
-    margin:0 auto !important;
-    box-sizing:border-box !important;
+    max-width:270px;
   }
   .p5-fold-leaf{
-    width:82px !important;
-    min-width:0 !important;
-    flex:0 0 82px !important;
-    padding:20px 6px 16px !important;
-    box-sizing:border-box !important;
+    min-width:76px;
+    padding:22px 8px 18px;
   }
   .p5-fold-text{
     font-size:12px;
-    letter-spacing:.18em;
+    letter-spacing:.20em;
   }
   
   /* 第五页大页面弹窗：手机端两侧留白 30px */
@@ -891,10 +860,9 @@ body{
     padding:60px 40px 70px !important;
   }
   .p6-verse-col{
-    font-size:16px;
-    letter-spacing:.38em;
-    gap:24px;
-    min-height:190px;
+    font-size:15px;
+    letter-spacing:.32em;
+    height:150px;
   }
 
   /* 三大分支页面模态容器：手机端两侧留白 30px */
@@ -1458,8 +1426,7 @@ body{
   flex-direction:column;
   align-items:center;
   text-align:center;
-  pointer-events:auto;
-  cursor:pointer;
+  pointer-events:none;
 }
 .p4-head-tag{
   font-family:"Huiwen-mincho","汇文明朝体",serif;
@@ -1588,11 +1555,10 @@ body{
 /* 仿真正宗案头风琴手札（默认即为展开状态，带古典折痕与微小书签） */
 .p5-accordion-book{
   position:relative;
-  display:inline-flex;
+  display:flex;
   flex-direction:row-reverse;
   align-items:stretch;
-  justify-content:center;
-  margin:0 auto !important;
+  perspective:1200px;
   cursor:pointer;
   transition:all .5s cubic-bezier(.16,1,.3,1);
   box-shadow:0 16px 36px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.03);
@@ -1600,8 +1566,6 @@ body{
   border-radius:2px;
   border:1px solid #c8d6ca;
   padding:6px;
-  width:auto;
-  max-width:90vw;
 }
 .p5-accordion-book:hover{
   transform:translateY(-4px);
@@ -1611,10 +1575,8 @@ body{
 /* 风琴单折页：带凹凸光影与真实折痕线 */
 .p5-fold-leaf{
   position:relative;
-  width:92px;
-  flex:0 0 92px;
-  padding:26px 12px 22px;
-  box-sizing:border-box;
+  min-width:96px;
+  padding:26px 14px 22px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -1837,14 +1799,19 @@ body{
   z-index:25;
 }
 .p6-verse-col{
+  writing-mode:vertical-rl;
+  -webkit-writing-mode:vertical-rl;
+  text-orientation:upright;
+  -webkit-text-orientation:upright;
+  font-family:"Huiwen-mincho","汇文明朝体",serif;
+  font-size:clamp(16px, 3.8vw, 19px);
+  letter-spacing:.38em;
+  color:var(--ink);
+  line-height:1.7;
+  height:170px;
   display:flex;
-  flex-direction:row-reverse;
-  justify-content:center;
-  align-items:flex-start;
-  gap:36px;
-  min-height:220px;
-  width:auto;
-  margin:0 auto;
+  flex-direction:column;
+  justify-content:space-between;
   opacity:0;
   transform:translateY(20px);
   transition:all 2.4s ease;
@@ -1854,15 +1821,6 @@ body{
   transform:translateY(0);
 }
 .p6-verse-line{
-  writing-mode:vertical-rl;
-  -webkit-writing-mode:vertical-rl;
-  text-orientation:upright;
-  -webkit-text-orientation:upright;
-  font-family:"Huiwen-mincho","汇文明朝体",serif;
-  font-size:clamp(17px, 4.2vw, 21px);
-  letter-spacing:.46em;
-  color:var(--ink);
-  line-height:1;
   display:flex;
   align-items:center;
   white-space:nowrap;
@@ -2328,7 +2286,7 @@ body{
   </section>
 
   <!-- 第四页：靈魚引水 · 蕩水映字（五尾水墨靈魚仿生游弋，此處喚醒靈魚系統） -->
-  <section class="stage-page4" id="page4" onclick="triggerP4Verse()">
+  <section class="stage-page4" id="page4">
     <div class="p4-wrap">
       <p class="p4-head-tag" id="p4Tag">—— 靈犀篇 · 碧波微瀾 ——</p>
       <h3 class="p4-title" id="p4Title">魚躍清池 · 水波不興</h3>
@@ -2661,45 +2619,22 @@ body{
   /* ---- 音乐 ---- */
   var bgm=document.getElementById('bgm');
   var musicBtn=document.getElementById('musicBtn');
-  var userManuallyPaused=false;
   var playing=false;
   function setPlaying(p){
     playing=p;
     if(musicBtn){
       if(p){
         musicBtn.classList.add('playing');
-        musicBtn.setAttribute('title', '暫停音樂');
-        musicBtn.setAttribute('aria-label', '暫停音樂');
       } else {
         musicBtn.classList.remove('playing');
-        musicBtn.setAttribute('title', '播放音樂');
-        musicBtn.setAttribute('aria-label', '播放音樂');
       }
     }
   }
-  function toggleMusic(e){
-    if(e) e.stopPropagation();
-    if(!bgm) return;
-    if(!bgm.paused){
-      bgm.pause();
-      userManuallyPaused = true;
-      setPlaying(false);
-    } else {
-      userManuallyPaused = false;
-      bgm.play().then(function(){
-        setPlaying(true);
-      }).catch(function(){
-        setPlaying(false);
-      });
-    }
+  function toggleMusic(){
+    if(playing){bgm.pause();setPlaying(false);}
+    else{bgm.play().then(function(){setPlaying(true);}).catch(function(){setPlaying(false);});}
   }
-  if(musicBtn){
-    musicBtn.addEventListener('click', toggleMusic);
-    musicBtn.addEventListener('touchend', function(e){
-      e.preventDefault();
-      toggleMusic(e);
-    });
-  }
+  if(musicBtn) musicBtn.addEventListener('click',toggleMusic);
 
   /* ---- 十六档从左往右连贯舒展 + 文案从下往上渐显 (3s) + 滴落灰水滴 ---- */
   var ribs=document.querySelectorAll('.rib');
@@ -2708,80 +2643,76 @@ body{
   var poemDrop=document.getElementById('poemDrop');
   var subGreeting=document.getElementById('subGreeting');
 
-  var hasSweepRun = false;
   function runSweepAnimation(){
-    if(hasSweepRun) return;
-    hasSweepRun = true;
     var stepDelay = 95; // 每一档连贯带出下一档扇面
     
-    // 扇叶开始打开的那一刻，尝试播放音乐
+    // 扇叶开始打开的那一刻，同步自动触发播放音乐！
     if(bgm){
       bgm.muted = false;
-      try{
-        var playPromise = bgm.play();
-        if(playPromise !== undefined){
-          playPromise.then(function(){
-            setPlaying(true);
-          }).catch(function(){
-            var resumeAudio = function(e){
-              if(userManuallyPaused) return;
-              if(e && e.target && e.target.closest('#musicBtn')) return;
-              bgm.play().then(function(){
-                setPlaying(true);
-              }).catch(function(){});
-              window.removeEventListener('click', resumeAudio);
-              window.removeEventListener('touchstart', resumeAudio);
-              window.removeEventListener('scroll', resumeAudio);
-            };
-            window.addEventListener('click', resumeAudio, {once:true});
-            window.addEventListener('touchstart', resumeAudio, {once:true});
-            window.addEventListener('scroll', resumeAudio, {once:true});
-          });
-        }
-      }catch(e){}
+      var playPromise = bgm.play();
+      if(playPromise !== undefined){
+        playPromise.then(function(){
+          setPlaying(true);
+        }).catch(function(err){
+          // 现代浏览器针对未发生任何交互的页面会执行严格的自动播放策略
+          // 此处做全局静默捕获，并在用户任意首次点击/触摸屏幕时立刻瞬时唤醒自动播放
+          console.log('Autoplay deferred for interaction');
+          var resumeAudio = function(){
+            bgm.play().then(function(){
+              setPlaying(true);
+            });
+            window.removeEventListener('click', resumeAudio);
+            window.removeEventListener('touchstart', resumeAudio);
+            window.removeEventListener('scroll', resumeAudio);
+          };
+          window.addEventListener('click', resumeAudio, {once:true});
+          window.addEventListener('touchstart', resumeAudio, {once:true});
+          window.addEventListener('scroll', resumeAudio, {once:true});
+        });
+      }
     }
 
     // 扇叶随时间从左向右舒展
     ribs.forEach(function(rib, index){
       setTimeout(function(){
         rib.classList.add('opened');
-      }, 150 + (index * stepDelay));
+      }, 350 + (index * stepDelay));
     });
 
     // 右上竖列文案一：前半句“此情無計可消除”先显现 (3s)
     setTimeout(function(){
       if(poemCol1) poemCol1.classList.add('show');
-    }, 250);
+    }, 450);
 
     // 后半句于前半句中间位置衔接自下而上浮现 (3s)
     setTimeout(function(){
       if(poemCol2) poemCol2.classList.add('show');
-    }, 250 + 700);
+    }, 450 + 900);
 
     // 结尾水滴：隐于心头之间垂直坠落
     setTimeout(function(){
       if(poemDrop) poemDrop.classList.add('drop-in');
-    }, 250 + 2000);
+    }, 450 + 2800);
 
     // 页面左下角文案二：“卿卿如晤，見字如面”竖列浮现 (2.5s)
     setTimeout(function(){
       if(subGreeting) subGreeting.classList.add('show');
-    }, 250 + 1800);
+    }, 450 + 2600);
 
     // 细长竖线箭头：保持最初敲定的第一页版位，优雅淡出指引第二页
     setTimeout(function(){
       var ind = document.getElementById('scrollIndicator');
       if(ind) ind.classList.add('show');
-    }, 250 + 2600);
+    }, 450 + 3800);
   }
 
-  // 保证移动端 DOM 就绪即刻激活动画，绝不等外部资源卡死
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', runSweepAnimation);
-  } else {
+  if(document.readyState === 'complete'){
     runSweepAnimation();
+  } else {
+    window.addEventListener('load', function(){
+      runSweepAnimation();
+    });
   }
-  window.addEventListener('load', runSweepAnimation);
 
   /* ---- 第二页古宣长卷（3.5s 自上而下舒展展开）与诗词丝线悬吊错落浮现动效 ---- */
   var p2Intro = document.getElementById('p2Intro');
@@ -3158,26 +3089,16 @@ body{
       p4Ctx.restore();
     }
 
-    // 页面水波荡开与浮字唤醒
+    // 页面水波荡开监听
     window.addEventListener('click', function(e){
-      var p4Top = page4El ? page4El.offsetTop - 150 : 0;
+      var p4Top = page4El ? page4El.offsetTop - 100 : 0;
       if(window.scrollY >= p4Top){
+        // 如果点击的是折子本体或弹窗，不额外激起水波
         if(e.target.closest('#p5Booklet') || e.target.closest('#p5Modal')) return;
         addP4Ripple(e.clientX, e.clientY);
         triggerP4Verse();
       }
     });
-
-    window.addEventListener('touchstart', function(e){
-      if(e.touches.length > 0){
-        var p4Top = page4El ? page4El.offsetTop - 150 : 0;
-        if(window.scrollY >= p4Top){
-          if(e.target.closest('#p5Booklet') || e.target.closest('#p5Modal')) return;
-          addP4Ripple(e.touches[0].clientX, e.touches[0].clientY);
-          triggerP4Verse();
-        }
-      }
-    }, { passive: true });
 
     function p4FishLoop(){
       p4Ctx.clearRect(0, 0, p4Canvas.width, p4Canvas.height);
